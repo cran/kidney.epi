@@ -1,0 +1,9 @@
+citHeader("To cite the function of the kidney.epi package in publications use:")
+citEntry(entry = "Article", 
+    author = personList(as.person("Boris Bikbov")), title = "R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index", 
+    journal = "Kidney Disease", year = 2018, 
+    volume = "*", pages = "**--**", 
+    url = "https://www.karger.com/Journal/Home/261893", 
+    textVersion = paste("Bikbov B. (2018)", 
+        "R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index", 
+        "Kidney Disease. **:***--***"))

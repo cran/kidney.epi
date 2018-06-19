@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Boris Bikbov" />
+
+<meta name="date" content="2018-06-19" />
+
+<title>Kidney transplantation</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Kidney transplantation</h1>
+<h4 class="author"><em>Boris Bikbov</em></h4>
+<h4 class="date"><em>2018-06-19</em></h4>
+
+
+
+<div id="kidney-transplantation" class="section level1">
+<h1>Kidney transplantation</h1>
+<p>kidney.epi R package includes functions which useful for kidney transplantation, and a sample dataframe.</p>
+<p>See also: [kidneyepidemiology.org web site] <a href="http://www.kidneyepidemiology.org/r" title="Title">id</a></p>
+<div id="dataframes" class="section level2">
+<h2>Dataframes</h2>
+<ul>
+<li>ktx - contains data for 10 kidney transplant patients (<em>see description in documentation</em>).</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(kidney.epi)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">head</span>(ktx)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#&gt;   ptid rec.age don.age don.height don.weight don.ethnicity</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">#&gt; 1  149    62.5      68        155       60.0         White</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="co">#&gt; 2  385    53.5      43        180       90.0         White</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co">#&gt; 3  299    69.6      78        168       70.0         White</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co">#&gt; 4  224    74.3      68        180      113.0         White</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="co">#&gt; 5  330    71.5      73        171       68.0         White</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="co">#&gt; 6  428    67.1      72        163       68.6         White</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co">#&gt;   don.hypertension don.diabetes don.causeofdeath don.creatinine don.hcv</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co">#&gt; 1              Yes           No  cerebrovascular           0.68       N</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#&gt; 2              N/A          N/A           trauma           0.76       N</span></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#&gt; 3              Yes           No  cerebrovascular           0.82       N</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="co">#&gt; 4              Yes           No  cerebrovascular           1.97       N</span></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co">#&gt; 5              Yes           No           trauma           0.63       N</span></a>
+<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#&gt; 6               No           No  cerebrovascular           1.13       N</span></a>
+<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="co">#&gt;   don.dcdstatus</span></a>
+<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="co">#&gt; 1            No</span></a>
+<a class="sourceLine" id="cb1-19" data-line-number="19"><span class="co">#&gt; 2           Yes</span></a>
+<a class="sourceLine" id="cb1-20" data-line-number="20"><span class="co">#&gt; 3            No</span></a>
+<a class="sourceLine" id="cb1-21" data-line-number="21"><span class="co">#&gt; 4            No</span></a>
+<a class="sourceLine" id="cb1-22" data-line-number="22"><span class="co">#&gt; 5            No</span></a>
+<a class="sourceLine" id="cb1-23" data-line-number="23"><span class="co">#&gt; 6           Yes</span></a></code></pre></div>
+</div>
+<div id="functions" class="section level2">
+<h2>Functions</h2>
+<div id="calculate-kdpi-and-kdri-with-ktx.kdpi.optn" class="section level3">
+<h3>Calculate KDPI and KDRI with <code>ktx.kdpi.optn</code></h3>
+<p>Function ktx.kdpi.optn calculates Kidney Donor Risk Index (KDRI) and Kidney Donor Profile Index (KDPI) based on the algorithm of US Organ Procurement and Transplantation Network.</p>
+<p>In case you use this function and kidney.epi package for preparation of a manuscript, please use the following citation: “Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Disease. 2018”.</p>
+<p>You can use <code>ktx.kdpi.optn</code> either for calculation of KDPI and KDRI for a single patient, or for a dataset.</p>
+<p>To calculate for a single patient, use the following syntax:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># call ktx.kdpi.optn function, and directly set paramenters values</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">ktx.kdpi.optn</span> (<span class="dt">age =</span> <span class="dv">60</span>, <span class="dt">height_cm =</span> <span class="dv">168</span>, <span class="dt">weight_kg =</span> <span class="dv">93</span>, <span class="dt">ethnicity =</span> <span class="st">&quot;White&quot;</span>, <span class="dt">hypertension =</span> <span class="st">&quot;yes&quot;</span>, <span class="dt">diabetes =</span> <span class="st">&quot;no&quot;</span>, <span class="dt">causeofdeath =</span> <span class="st">&quot;roadinjury&quot;</span>, <span class="dt">creatinine =</span> <span class="fl">1.4</span>, <span class="dt">hcv =</span> <span class="st">&quot;negative&quot;</span>, <span class="dt">dcdstatus =</span> <span class="st">&quot;no&quot;</span>, <span class="dt">creatinineunits =</span> <span class="st">&quot;mg/dl&quot;</span>, <span class="dt">return_output_type =</span> <span class="st">&quot;KDRI_Rao&quot;</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; For the calculations of KDRI and KDPI the  2016  year is used for mapping values, KDRI scaling factor, as well as chances of hypertension and diabetes in case if they were unknown for donor.</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; [1] 1.8</span></a></code></pre></div>
+<p>To calculate for a multiply patients in a dataset, use the following syntax:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># copy internal dataframe ktx from R package to your dataframe</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">mydata &lt;-<span class="st"> </span>ktx</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co"># calculate Kidney Donor Profile Index (KDPI) using the latest available OPTN mapping values</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">mydata<span class="op">$</span>kdpi &lt;-<span class="st"> </span><span class="kw">ktx.kdpi.optn</span> ( <span class="dt">age =</span> mydata<span class="op">$</span>don.age,</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">  <span class="dt">height_cm =</span> mydata<span class="op">$</span>don.height, <span class="dt">weight_kg =</span> mydata<span class="op">$</span>don.weight,</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">  <span class="dt">ethnicity =</span> mydata<span class="op">$</span>don.ethnicity, <span class="dt">hypertension =</span> mydata<span class="op">$</span>don.hypertension,</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8">  <span class="dt">diabetes =</span> mydata<span class="op">$</span>don.diabetes, <span class="dt">causeofdeath =</span> mydata<span class="op">$</span>don.causeofdeath,</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">  <span class="dt">creatinine =</span> mydata<span class="op">$</span>don.creatinine, <span class="dt">hcv =</span> mydata<span class="op">$</span>don.hcv,</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">  <span class="dt">dcdstatus =</span> mydata<span class="op">$</span>don.dcd, <span class="dt">creatinineunits =</span> <span class="st">&quot;mg/dl&quot;</span>,</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">  <span class="co"># which param to return</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12">  <span class="dt">return_output_type =</span> <span class="st">&quot;KDPI&quot;</span>,</a>
+<a class="sourceLine" id="cb3-13" data-line-number="13">  <span class="co"># customize all labels used in the dataframe</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14">  <span class="co"># label for Afroamerican ethnicity </span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15">  <span class="dt">label_afroamerican =</span> <span class="kw">c</span> (<span class="st">&quot;Afroamerican&quot;</span>),</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16">  <span class="co"># label for a positive history of hypertension</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17">  <span class="dt">label_hypertension_positive =</span> <span class="kw">c</span> (<span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;YES&quot;</span>),</a>
+<a class="sourceLine" id="cb3-18" data-line-number="18">  <span class="co"># label for an unknown history of hypertension</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19">  <span class="dt">label_hypertension_unknown =</span> <span class="st">&quot;N/A&quot;</span>, <span class="co"># if missing values defined unknown history then use &quot;NA&quot; (with quotes!)</span></a>
+<a class="sourceLine" id="cb3-20" data-line-number="20">  <span class="co"># label for a positive history of diabetes</span></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21">  <span class="dt">label_diabetes_positive =</span> <span class="kw">c</span> (<span class="st">&quot;Yes&quot;</span>, <span class="st">&quot;YES&quot;</span>),</a>
+<a class="sourceLine" id="cb3-22" data-line-number="22">  <span class="co"># label for an unknown history of diabetes</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23">  <span class="dt">label_diabetes_unknown =</span> <span class="st">&quot;N/A&quot;</span>, <span class="co"># if missing values defined unknown history then use &quot;NA&quot; (with quotes!)</span></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24">  <span class="co"># label for a cause of death due to cerebrovascular/stroke</span></a>
+<a class="sourceLine" id="cb3-25" data-line-number="25">  <span class="dt">label_causeofdeath =</span> <span class="kw">c</span> (<span class="st">&quot;cerebrovascular&quot;</span>),</a>
+<a class="sourceLine" id="cb3-26" data-line-number="26">  <span class="co"># label for a positive hcv status</span></a>
+<a class="sourceLine" id="cb3-27" data-line-number="27">  <span class="dt">label_hcv_positive =</span> <span class="kw">c</span> (<span class="st">&quot;positive&quot;</span>),</a>
+<a class="sourceLine" id="cb3-28" data-line-number="28">  <span class="co"># label for an unknown, not done, indeterminate, or pending hcv status</span></a>
+<a class="sourceLine" id="cb3-29" data-line-number="29">  <span class="dt">label_hcv_unknown =</span> <span class="st">&quot;NA&quot;</span>, <span class="co"># if missing values defined unknown history then use &quot;NA&quot; (with quotes!)</span></a>
+<a class="sourceLine" id="cb3-30" data-line-number="30">  <span class="co"># label for a donation after circulatory death status</span></a>
+<a class="sourceLine" id="cb3-31" data-line-number="31">  <span class="dt">label_dcdstatus =</span> <span class="kw">c</span> (<span class="st">&quot;Yes&quot;</span>)</a>
+<a class="sourceLine" id="cb3-32" data-line-number="32">) </a>
+<a class="sourceLine" id="cb3-33" data-line-number="33"><span class="co">#&gt; For the calculations of KDRI and KDPI the  2016  year is used for mapping values, KDRI scaling factor, as well as chances of hypertension and diabetes in case if they were unknown for donor.</span></a>
+<a class="sourceLine" id="cb3-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb3-35" data-line-number="35"><span class="co"># show descriptive stat for the calculated values</span></a>
+<a class="sourceLine" id="cb3-36" data-line-number="36"><span class="kw">summary</span>(mydata<span class="op">$</span>kdpi)</a>
+<a class="sourceLine" id="cb3-37" data-line-number="37"><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></a>
+<a class="sourceLine" id="cb3-38" data-line-number="38"><span class="co">#&gt;   44.00   94.25   96.50   90.70   97.75  100.00</span></a></code></pre></div>
+<p>Take in account that the labels paramenters of the function have to correspond to the labels used in your data frame. In the example above labels for a positive history of hypertension are defined as <em>label_hypertension_positive = c (“Yes”, “YES”)</em> that means in the data frame it could be either “Yes” or “YES”. In case you use different labelling in your data frame, define this appropriatelly. For example, if you define a positive history of hypertension as 1 and negative history as 0, you have to change the labeling in parementers of the function to <em>label_hypertension_positive = c (1)</em>.</p>
+<p><strong>Important notice on NA (not available values)</strong><br />
+Be careful with labeling of missing/unknown data for a history of hypertension and diabetes.<br />
+If donors with an unknown history of hypertension in your data file has a standard R missing value NA, set the variable label_hypertension_unknown = “NA” <strong>(with quotes!)</strong>.<br />
+If donors with an unknown history of hypertension in your data file defined as “no data”, set the variable label_hypertension_unknown = “no data”.<br />
+If donors with an unknown history of hypertension in your data file defined as 999, set the variable label_hypertension_unknown = 999.</p>
+<p>Note that by default KDPI and KDRI are calculated by the latest available OPTN revision (the paramenter by default is <code>mapping_values_year</code> = “latest”). If you wish to change the reference year, set the <code>mapping_values_year</code> equal to the year. To know for which years the OPTN revision is presented in the R package, use function <code>ktx.kdpi.optn.show.years()</code>.</p>
+</div>
+<div id="show-years-available-in-the-optn-mapping-table-with-ktx.kdpi.optn.show.years" class="section level3">
+<h3>Show years available in the OPTN mapping table with <code>ktx.kdpi.optn.show.years</code></h3>
+<p>Shows which years are available in the R package for the OPTN mapping table, KDRI scaling factor, etc. These years could be defined in the <code>mapping_values_year</code> parameter of the <code>ktx.kdpi.optn</code> function.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">ktx.kdpi.optn.show.years</span>()</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; The following years are presented in tables with OPTN mapping values, KDRI scaling factor, etc. </span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; [1] 2016 2015</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; You can use any of this years in the mapping_values_year parameter of the ktx.kdpi.optn function for mapping calculations of KDPI and KDRI.</span></a></code></pre></div>
+</div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Rao PS, Schaubel DE, Guidinger MK, Andreoni KA. A Comprehensive Risk Quantification Score for Deceased Donor Kidneys: The Kidney Donor Risk Index. Transplantation 2009; 88: 231–6.</p>
+<p>Guide to calculating and interpreting KDPI could be found at <a href="https://optn.transplant.hrsa.gov/media/1512/guide_to_calculating_interpreting_kdpi.pdf" class="uri">https://optn.transplant.hrsa.gov/media/1512/guide_to_calculating_interpreting_kdpi.pdf</a></p>
+<p>Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Disease. 2018</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
