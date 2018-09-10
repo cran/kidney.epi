@@ -2,3 +2,9 @@
 
 export(ktx.kdpi.optn)
 export(ktx.kdpi.optn.show.years)
+export(service.count_greater_threshhold)
+export(service.count_lowerequal_threshhold)
+export(service.is.param_possible)
+export(service.singular_or_plural)
+export(service.strict_to_numeric_threshhold_greater)
+export(service.strict_to_numeric_threshhold_lower)

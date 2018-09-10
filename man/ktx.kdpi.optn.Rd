@@ -15,39 +15,39 @@ ktx.kdpi.optn(age, height_cm = 0, height_ft = 0, height_inch = 0,
   label_hcv_unknown = "NA", label_dcdstatus = c("yes"))
 }
 \arguments{
-\item{age}{Age, in years.}
+\item{age}{Numeric vector. Age, in years.}
 
-\item{height_cm}{Could be defined either as height_cm if is measured in cm, or as height_ft and height_inch if is measured in feet and inches.
+\item{height_cm}{Numeric vector. Could be defined either as height_cm if is measured in cm, or as height_ft and height_inch if is measured in feet and inches.
 If the parameter height_cm is greater than 0, the function uses cm, otherwise - feet and inches.}
 
 \item{height_ft}{see height_cm}
 
 \item{height_inch}{see height_cm}
 
-\item{weight_kg}{Could be defined either as weight_kg if measured in kg, or as weight_lb if is measured in pounds.
+\item{weight_kg}{Numeric vector. Could be defined either as weight_kg if measured in kg, or as weight_lb if is measured in pounds.
 If the parameter weight_kg is greater than 0, the function uses kg, otherwise - pounds.}
 
 \item{weight_lb}{see weight_kg}
 
-\item{ethnicity}{Ethnicity, specify in case of African-American donors which have special coefficient in the regression equation. The value of variable refers to the parameter label_afroamerican.}
+\item{ethnicity}{Vector. Ethnicity, specify in case of African-American donors which have special coefficient in the regression equation. The value of variable refers to the parameter label_afroamerican.}
 
-\item{hypertension}{History of hypertension, specify in case of hypertensive donors which have special coefficient in the regression equation. The value of variable refers to the parameters label_hypertension_positive and label_hypertension_unknown.}
+\item{hypertension}{Vector. History of hypertension, specify in case of hypertensive donors which have special coefficient in the regression equation. The value of variable refers to the parameters label_hypertension_positive and label_hypertension_unknown.}
 
-\item{diabetes}{History of diabetes, specify in case of donors with diabetes which have special coefficient in the regression equation. The value of variable refers to the parameters label_diabetes_positive and label_diabetes_unknown.}
+\item{diabetes}{Vector. History of diabetes, specify in case of donors with diabetes which have special coefficient in the regression equation. The value of variable refers to the parameters label_diabetes_positive and label_diabetes_unknown.}
 
-\item{causeofdeath}{Cause of death, specify whether death was due to cerebrovascular disease, or other reasons.}
+\item{causeofdeath}{Vector. Cause of death, specify whether death was due to cerebrovascular disease, or other reasons.}
 
-\item{creatinine}{Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinineunits (if not defined explicitly by user, the default value is "micromol/L").}
+\item{creatinine}{Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinineunits (if not defined explicitly by user, the default value is "micromol/L").}
 
-\item{hcv}{Hepatitis C virus status. The value of variable refers to the parameters label_hcv_positive and label_hcv_unknown.}
+\item{hcv}{Vector. Hepatitis C virus status. The value of variable refers to the parameters label_hcv_positive and label_hcv_unknown.}
 
-\item{dcdstatus}{Donation after circulatory death status. Specify whether organ was from a donor after circulatory death or not. The value of variable refers to the parameter label_dcdstatus.}
+\item{dcdstatus}{Vector. Donation after circulatory death status. Specify whether organ was from a donor after circulatory death or not. The value of variable refers to the parameter label_dcdstatus.}
 
-\item{creatinineunits}{Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".}
+\item{creatinineunits}{Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".}
 
-\item{return_output_type}{Which calculated parameter to return from the function: "KDRI_Rao" - Raw Kidney Donor Risk Index, "KDRI_median" - scaled to the median Kidney Donor Risk Index, or "KDPI" - Kidney Donor Profile Index.}
+\item{return_output_type}{Character string. Specify which calculated parameter to return from the function: "KDRI_Rao" - Raw Kidney Donor Risk Index, "KDRI_median" - scaled to the median Kidney Donor Risk Index, or "KDPI" - Kidney Donor Profile Index.}
 
-\item{mapping_values_year}{Which year to take for the OPTN mapping table, as well as KDRI scaling factor and chances of hypertension and diabetes in case if they were unknown for donor.
+\item{mapping_values_year}{Numeric value or character string.  Specify which year to take for the OPTN mapping table, as well as KDRI scaling factor and chances of hypertension and diabetes in case if they were unknown for donor.
 
 By default the value is "latest", and the function takes the latest available OPTN mapping table and coefficients from the internal dataframes ktx.kdpi_mapping_table and ktx.kdpi_coefficients_table.
 
@@ -55,23 +55,23 @@ But if necessary, a user could define the exact year (i.e. mapping_values_year =
 
 For a list of available years run the following: ktx.kdpi.optn.show.years().}
 
-\item{label_afroamerican}{Label(s) for Afroamerican ethnicity.}
+\item{label_afroamerican}{List. Label(s) for Afroamerican ethnicity.}
 
-\item{label_hypertension_positive}{Label(s) for a positive history of hypertension.}
+\item{label_hypertension_positive}{List. Label(s) for a positive history of hypertension.}
 
-\item{label_hypertension_unknown}{Label(s) for donors with unknown history of hypertension.}
+\item{label_hypertension_unknown}{List. Label(s) for donors with unknown history of hypertension.}
 
-\item{label_diabetes_positive}{Label(s) for a positive history of diabetes.}
+\item{label_diabetes_positive}{List. Label(s) for a positive history of diabetes.}
 
-\item{label_diabetes_unknown}{Label(s) for donors with unknown history of diabetes.}
+\item{label_diabetes_unknown}{List. Label(s) for donors with unknown history of diabetes.}
 
-\item{label_causeofdeath}{Label(s) for a cause of death due to cerebrovascular/stroke.}
+\item{label_causeofdeath}{List. Label(s) for a cause of death due to cerebrovascular/stroke.}
 
-\item{label_hcv_positive}{Label(s) for a positive HCV status.}
+\item{label_hcv_positive}{List. Label(s) for a positive HCV status.}
 
-\item{label_hcv_unknown}{Label(s) for an unknown, not done, indeterminate, or pending HCV status.}
+\item{label_hcv_unknown}{List. Label(s) for an unknown, not done, indeterminate, or pending HCV status.}
 
-\item{label_dcdstatus}{Label(s) for a donor after circulatory death status.}
+\item{label_dcdstatus}{List. Label(s) for a donor after circulatory death status.}
 }
 \value{
 numeric One of the following values based on the return_output_type argument: Raw Kidney Donor Risk Index (KDRI), Scaled to the median Kidney Donor Risk Index (KDRI), or Kidney Donor Profile Index (KDPI).
@@ -93,7 +93,7 @@ More reading:
 
 Programming: Boris Bikbov \email{boris@bikbov.ru}.
 
-Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Disease. 2018
+Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Diseases, 2018. DOI: 10.1159/000492427
 }
 \examples{
 ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White",

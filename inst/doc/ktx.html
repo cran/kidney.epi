@@ -12,7 +12,7 @@
 
 <meta name="author" content="Boris Bikbov" />
 
-<meta name="date" content="2018-06-19" />
+<meta name="date" content="2018-09-06" />
 
 <title>Kidney transplantation</title>
 
@@ -280,7 +280,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Kidney transplantation</h1>
 <h4 class="author"><em>Boris Bikbov</em></h4>
-<h4 class="date"><em>2018-06-19</em></h4>
+<h4 class="date"><em>2018-09-06</em></h4>
 
 
 
@@ -327,7 +327,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>To calculate for a single patient, use the following syntax:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># call ktx.kdpi.optn function, and directly set paramenters values</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">ktx.kdpi.optn</span> (<span class="dt">age =</span> <span class="dv">60</span>, <span class="dt">height_cm =</span> <span class="dv">168</span>, <span class="dt">weight_kg =</span> <span class="dv">93</span>, <span class="dt">ethnicity =</span> <span class="st">&quot;White&quot;</span>, <span class="dt">hypertension =</span> <span class="st">&quot;yes&quot;</span>, <span class="dt">diabetes =</span> <span class="st">&quot;no&quot;</span>, <span class="dt">causeofdeath =</span> <span class="st">&quot;roadinjury&quot;</span>, <span class="dt">creatinine =</span> <span class="fl">1.4</span>, <span class="dt">hcv =</span> <span class="st">&quot;negative&quot;</span>, <span class="dt">dcdstatus =</span> <span class="st">&quot;no&quot;</span>, <span class="dt">creatinineunits =</span> <span class="st">&quot;mg/dl&quot;</span>, <span class="dt">return_output_type =</span> <span class="st">&quot;KDRI_Rao&quot;</span>)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; For the calculations of KDRI and KDPI the  2016  year is used for mapping values, KDRI scaling factor, as well as chances of hypertension and diabetes in case if they were unknown for donor.</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; For the calculations of KDRI and KDPI the  2017  year is used for mapping values, KDRI scaling factor, as well as chances of hypertension and diabetes in case if they were unknown for donor.</span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; [1] 1.8</span></a></code></pre></div>
 <p>To calculate for a multiply patients in a dataset, use the following syntax:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># copy internal dataframe ktx from R package to your dataframe</span></a>
@@ -362,7 +362,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb3-30" data-line-number="30">  <span class="co"># label for a donation after circulatory death status</span></a>
 <a class="sourceLine" id="cb3-31" data-line-number="31">  <span class="dt">label_dcdstatus =</span> <span class="kw">c</span> (<span class="st">&quot;Yes&quot;</span>)</a>
 <a class="sourceLine" id="cb3-32" data-line-number="32">) </a>
-<a class="sourceLine" id="cb3-33" data-line-number="33"><span class="co">#&gt; For the calculations of KDRI and KDPI the  2016  year is used for mapping values, KDRI scaling factor, as well as chances of hypertension and diabetes in case if they were unknown for donor.</span></a>
+<a class="sourceLine" id="cb3-33" data-line-number="33"><span class="co">#&gt; For the calculations of KDRI and KDPI the  2017  year is used for mapping values, KDRI scaling factor, as well as chances of hypertension and diabetes in case if they were unknown for donor.</span></a>
 <a class="sourceLine" id="cb3-34" data-line-number="34"></a>
 <a class="sourceLine" id="cb3-35" data-line-number="35"><span class="co"># show descriptive stat for the calculated values</span></a>
 <a class="sourceLine" id="cb3-36" data-line-number="36"><span class="kw">summary</span>(mydata<span class="op">$</span>kdpi)</a>
@@ -381,7 +381,7 @@ If donors with an unknown history of hypertension in your data file defined as 9
 <p>Shows which years are available in the R package for the OPTN mapping table, KDRI scaling factor, etc. These years could be defined in the <code>mapping_values_year</code> parameter of the <code>ktx.kdpi.optn</code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">ktx.kdpi.optn.show.years</span>()</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; The following years are presented in tables with OPTN mapping values, KDRI scaling factor, etc. </span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; [1] 2016 2015</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; [1] 2017 2016 2015</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; You can use any of this years in the mapping_values_year parameter of the ktx.kdpi.optn function for mapping calculations of KDPI and KDRI.</span></a></code></pre></div>
 </div>
 </div>

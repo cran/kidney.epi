@@ -13,41 +13,41 @@
 #' 
 #' Programming: Boris Bikbov \email{boris@@bikbov.ru}.
 #'
-#' Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Disease. 2018
+#' Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Diseases, 2018. DOI: 10.1159/000492427
 #'
-#' @param age Age, in years.
-#' @param height_cm Could be defined either as height_cm if is measured in cm, or as height_ft and height_inch if is measured in feet and inches.
+#' @param age Numeric vector. Age, in years.
+#' @param height_cm Numeric vector. Could be defined either as height_cm if is measured in cm, or as height_ft and height_inch if is measured in feet and inches.
 #'    If the parameter height_cm is greater than 0, the function uses cm, otherwise - feet and inches.
 #' @param height_ft see height_cm
 #' @param height_inch see height_cm
-#' @param weight_kg Could be defined either as weight_kg if measured in kg, or as weight_lb if is measured in pounds.
+#' @param weight_kg Numeric vector. Could be defined either as weight_kg if measured in kg, or as weight_lb if is measured in pounds.
 #'    If the parameter weight_kg is greater than 0, the function uses kg, otherwise - pounds.
 #' @param weight_lb see weight_kg
-#' @param ethnicity Ethnicity, specify in case of African-American donors which have special coefficient in the regression equation. The value of variable refers to the parameter label_afroamerican.
-#' @param hypertension History of hypertension, specify in case of hypertensive donors which have special coefficient in the regression equation. The value of variable refers to the parameters label_hypertension_positive and label_hypertension_unknown.
-#' @param diabetes History of diabetes, specify in case of donors with diabetes which have special coefficient in the regression equation. The value of variable refers to the parameters label_diabetes_positive and label_diabetes_unknown.
-#' @param causeofdeath Cause of death, specify whether death was due to cerebrovascular disease, or other reasons.
-#' @param creatinine Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinineunits (if not defined explicitly by user, the default value is "micromol/L").
-#' @param hcv Hepatitis C virus status. The value of variable refers to the parameters label_hcv_positive and label_hcv_unknown.
-#' @param dcdstatus Donation after circulatory death status. Specify whether organ was from a donor after circulatory death or not. The value of variable refers to the parameter label_dcdstatus.
-#' @param creatinineunits Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
-#' @param return_output_type Which calculated parameter to return from the function: "KDRI_Rao" - Raw Kidney Donor Risk Index, "KDRI_median" - scaled to the median Kidney Donor Risk Index, or "KDPI" - Kidney Donor Profile Index.
-#' @param mapping_values_year Which year to take for the OPTN mapping table, as well as KDRI scaling factor and chances of hypertension and diabetes in case if they were unknown for donor.
+#' @param ethnicity Vector. Ethnicity, specify in case of African-American donors which have special coefficient in the regression equation. The value of variable refers to the parameter label_afroamerican.
+#' @param hypertension Vector. History of hypertension, specify in case of hypertensive donors which have special coefficient in the regression equation. The value of variable refers to the parameters label_hypertension_positive and label_hypertension_unknown.
+#' @param diabetes Vector. History of diabetes, specify in case of donors with diabetes which have special coefficient in the regression equation. The value of variable refers to the parameters label_diabetes_positive and label_diabetes_unknown.
+#' @param causeofdeath Vector. Cause of death, specify whether death was due to cerebrovascular disease, or other reasons.
+#' @param creatinine Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinineunits (if not defined explicitly by user, the default value is "micromol/L").
+#' @param hcv Vector. Hepatitis C virus status. The value of variable refers to the parameters label_hcv_positive and label_hcv_unknown.
+#' @param dcdstatus Vector. Donation after circulatory death status. Specify whether organ was from a donor after circulatory death or not. The value of variable refers to the parameter label_dcdstatus.
+#' @param creatinineunits Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
+#' @param return_output_type Character string. Specify which calculated parameter to return from the function: "KDRI_Rao" - Raw Kidney Donor Risk Index, "KDRI_median" - scaled to the median Kidney Donor Risk Index, or "KDPI" - Kidney Donor Profile Index.
+#' @param mapping_values_year Numeric value or character string.  Specify which year to take for the OPTN mapping table, as well as KDRI scaling factor and chances of hypertension and diabetes in case if they were unknown for donor.
 #'    
 #'    By default the value is "latest", and the function takes the latest available OPTN mapping table and coefficients from the internal dataframes ktx.kdpi_mapping_table and ktx.kdpi_coefficients_table.
 #'    
 #'    But if necessary, a user could define the exact year (i.e. mapping_values_year = 2015).
 #'    
 #'    For a list of available years run the following: ktx.kdpi.optn.show.years().
-#' @param label_afroamerican Label(s) for Afroamerican ethnicity.
-#' @param label_hypertension_positive Label(s) for a positive history of hypertension.
-#' @param label_hypertension_unknown Label(s) for donors with unknown history of hypertension.
-#' @param label_diabetes_positive Label(s) for a positive history of diabetes.
-#' @param label_diabetes_unknown Label(s) for donors with unknown history of diabetes.
-#' @param label_causeofdeath Label(s) for a cause of death due to cerebrovascular/stroke.
-#' @param label_hcv_positive Label(s) for a positive HCV status.
-#' @param label_hcv_unknown Label(s) for an unknown, not done, indeterminate, or pending HCV status.
-#' @param label_dcdstatus Label(s) for a donor after circulatory death status.
+#' @param label_afroamerican List. Label(s) for Afroamerican ethnicity.
+#' @param label_hypertension_positive List. Label(s) for a positive history of hypertension.
+#' @param label_hypertension_unknown List. Label(s) for donors with unknown history of hypertension.
+#' @param label_diabetes_positive List. Label(s) for a positive history of diabetes.
+#' @param label_diabetes_unknown List. Label(s) for donors with unknown history of diabetes.
+#' @param label_causeofdeath List. Label(s) for a cause of death due to cerebrovascular/stroke.
+#' @param label_hcv_positive List. Label(s) for a positive HCV status.
+#' @param label_hcv_unknown List. Label(s) for an unknown, not done, indeterminate, or pending HCV status.
+#' @param label_dcdstatus List. Label(s) for a donor after circulatory death status.
 #' @return numeric One of the following values based on the return_output_type argument: Raw Kidney Donor Risk Index (KDRI), Scaled to the median Kidney Donor Risk Index (KDRI), or Kidney Donor Profile Index (KDPI).
 #' @export
 #' @name ktx.kdpi.optn
@@ -105,13 +105,193 @@ ktx.kdpi.optn <- function (
               ){
   
 
+  
+  ##################################################################
+  # CHECK FUNCTION INPUT: BEGIN
+  
+  # at the beginning assume that all function arguments are present, and in the following code change it to FALSE if any of the obligatory argument(s) is(are) absent
+  fx_params_resulting <- TRUE
+  err_num <- 0
+  # Check whether all necessary params are defined by user
+  fx_params <- c("age", "ethnicity", "hypertension", "diabetes", "causeofdeath", "creatinine", "hcv", "dcdstatus") # List of obligatory function params which have to be defined by user at the function call
+  args <- names(as.list(match.call())[-1]) # take all params defined by user from the function
+  for(i in 1:length(fx_params)){
+    fx_param_local <- fx_params[i] %in% args # whether param is found among the obligatory 
+    if( fx_param_local == FALSE ){
+      warning("Obligatory argument ", fx_params[i], " is not defined by user in the function arguments", "\n")
+      err_num <- err_num + 1
+    }
+    fx_params_resulting <- fx_params_resulting && fx_param_local
+  }
+  
+  # Check of height and weight is more complex because they could be expressed in different variables by different dimentions
+  if ("height_cm" %in% args){
+    # do nothing
+  }else{
+    # if height_cm not presented check whether height_ft and height_inch are presented
+    if( ("height_ft" %in% args) && ("height_inch" %in% args)){
+      # do nothing
+    }else{
+      # if neither height_cm nor height_ft and height_inch are presented - there is no data for height at all
+      warning("Obligatory argument for height is not defined by user in the function arguments", "\n")
+      err_num <- err_num + 1
+      fx_params_resulting <- FALSE
+    }
+  }
+  # do the same check for weight
+  if ("weight_kg" %in% args){
+    # do nothing
+  }else{
+    # if weight_kg not presented check whether weight_lb are presented
+    if( "weight_lb" %in% args ){
+      # do nothing
+    }else{
+      # if neither weight_kg nor weight_lb are presented - there is no data for weight at all
+      warning("Obligatory argument for weight is not defined by user in the function arguments", "\n")
+      err_num <- err_num + 1
+      fx_params_resulting <- FALSE
+    }
+  }
+  # final message if any of the Obligatory arguments are missing
+  if(fx_params_resulting == FALSE){
+    stop("Obligatory argument", service.singular_or_plural(err_num, "", "s"), service.singular_or_plural(err_num, " is ", " are "), " not defined by user", "\n", "The execution of the function is interrupted.", "\n")
+  }
 
+  
+  # Check the type of arguments inputed by user
+
+  # check that user defined a single output param
+  if( length(return_output_type) != 1 ){
+    stop("The value for 'return_output_type' has to be a single character string. ", "The execution of the function is interrupted.", "\n")
+  }
+  # check that user defined a single creatinineunits
+  if( length(creatinineunits) != 1 ){
+    stop("The value for 'creatinineunits' has to be a single character string. ", "The execution of the function is interrupted.", "\n")
+  }
+
+  # check the range of output params
+  possible_params = c("KDPI", "KDRI_Rao", "KDRI_median")
+  if (!service.is.param_possible(return_output_type, possible_params)){
+    stop("The defined by user value '", return_output_type, "' for 'return_output_type' is not among possible values of the parameter. ", "The execution of the function is interrupted.", "\n")
+  }
+  # check the range of creatinineunits
+  possible_params = c("mg/dl", "micromol/l", "mmol/l")
+  if (!service.is.param_possible(tolower(creatinineunits), possible_params)){
+    stop("The defined by user value '", creatinineunits, "'for 'creatinineunits' is not among possible values of the parameter. ", "The execution of the function is interrupted.", "\n")
+  }  
+  
+  # Check whether numericl arguments inputed by user are fine (weight, height etc have to be positive numbers)
+  #   check and inform user whether argument contains non-numeric values
+  numeric_resulting = TRUE # assume that all arguments are numeric
+  numeric_local <- service.is_numeric(age)
+  if(!numeric_local) warning("Age is non-numeric argument.", "\n")
+  numeric_resulting <- numeric_local && numeric_resulting # if any of the argument is non-numeric, the numeric_resulting become FALSE
+  if ("height_cm" %in% args){
+    numeric_local <- service.is_numeric(height_cm)
+    if(!numeric_local) warning("Height in cm is non-numeric argument.", "\n")
+    numeric_resulting <- numeric_local && numeric_resulting
+  }
+  if ("height_ft" %in% args){
+    numeric_local <- service.is_numeric(height_ft)
+    if(!numeric_local) warning("Height in feet is non-numeric argument.", "\n")
+    numeric_resulting <- numeric_local && numeric_resulting
+  }
+  if ("height_inch" %in% args){
+    numeric_local <- service.is_numeric(height_inch)
+    if(!numeric_local) warning("Height in inches is non-numeric argument.", "\n")
+    numeric_resulting <- numeric_local && numeric_resulting
+  }
+  if ("weight_kg" %in% args){
+    numeric_local <- service.is_numeric(weight_kg)
+    if(!numeric_local) warning("Weight in kg is non-numeric argument.", "\n")
+    numeric_resulting <- numeric_local && numeric_resulting
+  }
+  if ("weight_lb" %in% args){
+    numeric_local <- service.is_numeric(weight_lb)
+    if(!numeric_local) warning("Weight in lb is non-numeric argument.", "\n")
+    numeric_resulting <- numeric_local && numeric_resulting
+  }
+  numeric_local <- service.is_numeric(creatinine)
+  if(!numeric_local) warning("Creatinine is non-numeric argument.", "\n")
+  numeric_resulting <- numeric_local && numeric_resulting # if any of the argument is non-numeric, the numeric_resulting become FALSE
+  # resulting message for numeric check
+  if(!numeric_resulting){
+    stop("At least one of the defined by user arguments is not numeric.", "The execution of the function is interrupted.", "\n")
+  }
+  
+  
+  # check plausible biologic boundaries:
+  #   check and inform user whether any values out of boundaries were substituted by NA
+  #   after the check chnge the value to boundaries in the possible range (i.e. age > 0 and < 100)
+  # age
+  # for age calculate suspiciosly_low twice: first time for warning if <0, seond time for cat if <17
+  suspiciosly_low <- service.count_lowerequal_threshhold(age, 0)
+  if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "negative values for age", "NA"))
+  suspiciosly_high <- service.count_greater_threshhold(age, 100)
+  if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "age >100 years", "NA"))
+  age <- service.strict_to_numeric_threshhold_lower(age, 0)
+  age <- service.strict_to_numeric_threshhold_greater(age, 100)
+  suspiciosly_low <- service.count_lowerequal_threshhold(age, 17)
+  if(suspiciosly_low > 0) cat(service.kdpi.optn.output_message(suspiciosly_low, "age <=17 years", "as is"))
+  # height_cm
+  if ("height_cm" %in% args){
+    suspiciosly_low <- service.count_lowerequal_threshhold(height_cm, 100)
+    suspiciosly_high <- service.count_greater_threshhold(height_cm, 230)
+    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "height <= 100 cm", "NA"))
+    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "height > 230 cm", "NA"))
+    height_cm <- service.strict_to_numeric_threshhold_lower(height_cm, 100)
+    height_cm <- service.strict_to_numeric_threshhold_greater(height_cm, 230)
+  }
+  # height_ft
+  if ("height_ft" %in% args){
+    suspiciosly_low <- service.count_lowerequal_threshhold(height_ft, 3)
+    suspiciosly_high <- service.count_greater_threshhold(height_ft, 8)
+    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "height <= 3 feet", "NA"))
+    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "height > 8 feet", "NA"))
+    height_ft <- service.strict_to_numeric_threshhold_lower(height_ft, 3)
+    height_ft <- service.strict_to_numeric_threshhold_greater(height_ft, 8)
+  }
+  # height_inch
+  if ("height_inch" %in% args){
+    suspiciosly_low <- service.count_lowerequal_threshhold(height_inch, -0.001)
+    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "negative values of inches", "NA"))
+    height_inch <- service.strict_to_numeric_threshhold_lower(height_inch, -0.001) # since 0 is possible value for inches
+  }
+  # weight_kg
+  if ("weight_kg" %in% args){
+    suspiciosly_low <- service.count_lowerequal_threshhold(weight_kg, 30)
+    suspiciosly_high <- service.count_greater_threshhold(weight_kg, 300)
+    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "weight <= 30 kg", "NA"))
+    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "weight > 300 kg", "NA"))
+    weight_kg <- service.strict_to_numeric_threshhold_lower(weight_kg, 30)
+    weight_kg <- service.strict_to_numeric_threshhold_greater(weight_kg, 300)
+  }
+  # weight_lb
+  if ("weight_lb" %in% args){
+    suspiciosly_low <- service.count_lowerequal_threshhold(weight_lb, 65)
+    suspiciosly_high <- service.count_greater_threshhold(weight_lb, 650)
+    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "weight <= 65 lb", "NA"))
+    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "weight > 650 lb", "NA"))
+    weight_kg <- service.strict_to_numeric_threshhold_lower(weight_lb, 65)
+    weight_kg <- service.strict_to_numeric_threshhold_greater(weight_lb, 650)
+  }
+  # creatinine
+  suspiciosly_low <- service.count_lowerequal_threshhold(creatinine, 0)
+  if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "creatinine <=0", "NA"))
+  creatinine <- service.strict_to_numeric_threshhold_lower(creatinine, 0)
+
+  # CHECK FUNCTION INPUT: END
+  ##################################################################
+
+
+  
+  
   # The following variables (listed below under CUSTOMIZE_YEAR heading) are defined according OPTN reference year:
   # 1. KDRI scaling factor for appropriate year
   # 2. Chances of hypertension and diabetes in case they were unknown for donor
   #    OPTN currently assumes the chances of HCV in patient with unknown HCV status as negative, and I entered the parameter assumed_chance_of_hcv_for_unknown which is set to 0 (i.e. negative). However, in case of future modification of chances of HCV in a patient with unknown HCV status, it could be set to a probability.
   # 3. KDRI to KDPI Mapping Table.
-
+  
   ##################################################################
   # CUSTOMIZE_YEAR: BEGIN
 

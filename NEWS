@@ -1,2 +1,7 @@
-# kidney.epi 1.0
+# kidney.epi 1.1.0
+* introduce service functions
+* add OPTN mapping values for the year 2017 to the internal dataframes in sysdata.rda
+* add check of the user input for ktx.kdpi.optn function
+
+# kidney.epi 1.0.0
 * first public release of the package
