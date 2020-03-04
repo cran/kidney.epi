@@ -9,8 +9,8 @@ library(kidney.epi)
 head(ktx)
 
 ## ------------------------------------------------------------------------
-# call ktx.kdpi.optn function, and directly set paramenters values
-ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White", hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury", creatinine = 1.4, hcv = "negative", dcdstatus = "no", creatinineunits = "mg/dl", return_output_type = "KDRI_Rao")
+# call ktx.kdpi.optn function, and directly set parameters values
+ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White", hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury", creatinine = 1.4, hcv = "negative", dcdstatus = "no", creatinine_units = "mg/dl", return_output_type = "KDRI_Rao")
 
 ## ------------------------------------------------------------------------
 # copy internal dataframe ktx from R package to your dataframe
@@ -22,7 +22,7 @@ mydata$kdpi <- ktx.kdpi.optn ( age = mydata$don.age,
   ethnicity = mydata$don.ethnicity, hypertension = mydata$don.hypertension,
   diabetes = mydata$don.diabetes, causeofdeath = mydata$don.causeofdeath,
   creatinine = mydata$don.creatinine, hcv = mydata$don.hcv,
-  dcdstatus = mydata$don.dcd, creatinineunits = "mg/dl",
+  dcdstatus = mydata$don.dcd, creatinine_units = "mg/dl",
   # which param to return
   return_output_type = "KDPI",
   # customize all labels used in the dataframe

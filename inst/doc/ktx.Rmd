@@ -37,17 +37,17 @@ head(ktx)
 
 Function ktx.kdpi.optn calculates Kidney Donor Risk Index (KDRI) and Kidney Donor Profile Index (KDPI) based on the algorithm of US Organ Procurement and Transplantation Network.
 
-In case you use this function and kidney.epi package for preparation of a manuscript, please use the following citation: "Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Disease. 2018".
+In case you use this function and kidney.epi package for preparation of a manuscript, please use the following citation: "Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Disease. 2018; 4:269–272 \doi:10.1159/000492427".
 
 You can use `ktx.kdpi.optn` either for calculation of KDPI and KDRI for a single patient, or for a dataset.
 
 To calculate for a single patient, use the following syntax:
 ```{r}
-# call ktx.kdpi.optn function, and directly set paramenters values
-ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White", hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury", creatinine = 1.4, hcv = "negative", dcdstatus = "no", creatinineunits = "mg/dl", return_output_type = "KDRI_Rao")
+# call ktx.kdpi.optn function, and directly set parameters values
+ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White", hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury", creatinine = 1.4, hcv = "negative", dcdstatus = "no", creatinine_units = "mg/dl", return_output_type = "KDRI_Rao")
 ```
 
-To calculate for a multiply patients in a dataset, use the following syntax:
+To calculate for a multiple patients in a dataset, use the following syntax:
 ```{r}
 # copy internal dataframe ktx from R package to your dataframe
 mydata <- ktx
@@ -58,7 +58,7 @@ mydata$kdpi <- ktx.kdpi.optn ( age = mydata$don.age,
   ethnicity = mydata$don.ethnicity, hypertension = mydata$don.hypertension,
   diabetes = mydata$don.diabetes, causeofdeath = mydata$don.causeofdeath,
   creatinine = mydata$don.creatinine, hcv = mydata$don.hcv,
-  dcdstatus = mydata$don.dcd, creatinineunits = "mg/dl",
+  dcdstatus = mydata$don.dcd, creatinine_units = "mg/dl",
   # which param to return
   return_output_type = "KDPI",
   # customize all labels used in the dataframe
@@ -86,7 +86,7 @@ mydata$kdpi <- ktx.kdpi.optn ( age = mydata$don.age,
 summary(mydata$kdpi)
 ```
 
-Take in account that the labels paramenters of the function have to correspond to the labels used in your data frame. In the example above labels for a positive history of hypertension are defined as *label_hypertension_positive = c ("Yes", "YES")* that means in the data frame it could be either "Yes" or "YES". In case you use different labelling in your data frame, define this appropriatelly. For example, if you define a positive history of hypertension as 1 and negative history as 0, you have to change the labeling in parementers of the function to *label_hypertension_positive = c (1)*.
+Take in account that the labels used in parameters of the function have to correspond to the labels used in your data frame. In the example above the labels for positive history of hypertension are defined as *label_hypertension_positive = c ("Yes", "YES")* that means in the data frame it could be either "Yes" or "YES". In case you use different labelling in your data frame, define this appropriatelly. For example, if you define a positive history of hypertension as 1 and negative history as 0, you have to change the labeling in paremeters of the function to *label_hypertension_positive = c (1)*.
 
 
 **Important notice on NA (not available values)**  
@@ -96,7 +96,7 @@ If donors with an unknown history of hypertension in your data file defined as "
 If donors with an unknown history of hypertension in your data file defined as 999, set the variable label_hypertension_unknown = 999.
 
 
-Note that by default KDPI and KDRI are calculated by the latest available OPTN revision (the paramenter by default is `mapping_values_year` = "latest"). If you wish to change the reference year, set the `mapping_values_year` equal to the year. To know for which years the OPTN revision is presented in the R package, use function `ktx.kdpi.optn.show.years()`.
+Note that by default KDPI and KDRI are calculated by the latest available OPTN revision (by default the parameter is `mapping_values_year` = "latest"). If you wish to change the reference year, set the `mapping_values_year` equal to the year. To see for which years the OPTN revision is available in the R package, use function `ktx.kdpi.optn.show.years()`.
 
 
 ### Show years available in the OPTN mapping table with `ktx.kdpi.optn.show.years`

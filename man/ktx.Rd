@@ -18,6 +18,7 @@
   \item{don.creatinine}{serum creatinine of the donor, in mg/dL}
   \item{don.hcv}{hepatitis c virus status of the donor}
   \item{don.dcdstatus}{donation after circulatory death status of the donor}
+  \item{don.sex}{sex of the donor}
 }}
 \source{
 Generation from different patients' records

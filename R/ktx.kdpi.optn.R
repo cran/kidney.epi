@@ -27,10 +27,10 @@
 #' @param hypertension Vector. History of hypertension, specify in case of hypertensive donors which have special coefficient in the regression equation. The value of variable refers to the parameters label_hypertension_positive and label_hypertension_unknown.
 #' @param diabetes Vector. History of diabetes, specify in case of donors with diabetes which have special coefficient in the regression equation. The value of variable refers to the parameters label_diabetes_positive and label_diabetes_unknown.
 #' @param causeofdeath Vector. Cause of death, specify whether death was due to cerebrovascular disease, or other reasons.
-#' @param creatinine Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinineunits (if not defined explicitly by user, the default value is "micromol/L").
+#' @param creatinine Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinine_units (if not defined explicitly by user, the default value is "micromol/L").
 #' @param hcv Vector. Hepatitis C virus status. The value of variable refers to the parameters label_hcv_positive and label_hcv_unknown.
 #' @param dcdstatus Vector. Donation after circulatory death status. Specify whether organ was from a donor after circulatory death or not. The value of variable refers to the parameter label_dcdstatus.
-#' @param creatinineunits Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
+#' @param creatinine_units Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
 #' @param return_output_type Character string. Specify which calculated parameter to return from the function: "KDRI_Rao" - Raw Kidney Donor Risk Index, "KDRI_median" - scaled to the median Kidney Donor Risk Index, or "KDPI" - Kidney Donor Profile Index.
 #' @param mapping_values_year Numeric value or character string.  Specify which year to take for the OPTN mapping table, as well as KDRI scaling factor and chances of hypertension and diabetes in case if they were unknown for donor.
 #'    
@@ -55,7 +55,7 @@
 #' ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White",
 #'   hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury",
 #'   creatinine = 1.4, hcv = "negative", dcdstatus = "no",
-#'   creatinineunits = "mg/dl", return_output_type = "KDRI_Rao")
+#'   creatinine_units = "mg/dl", return_output_type = "KDRI_Rao")
 #' ktx.kdpi.optn (age = 30, height_cm = 176, weight_kg = 82, ethnicity = "White", 
 #'   hypertension = "NA", diabetes = "no", causeofdeath = "roadinjury", 
 #'   creatinine = 150, hcv = "negative", dcdstatus = "no", return_output_type = "KDPI")
@@ -66,7 +66,7 @@
 
 ktx.kdpi.optn <- function (
               # variables for calculation of KDPI/KDRI
-              age, height_cm = 0, height_ft = 0, height_inch = 0, weight_kg = 0, weight_lb = 0, ethnicity, hypertension, diabetes, causeofdeath, creatinine, hcv, dcdstatus, creatinineunits = "micromol/l",
+              age, height_cm = 0, height_ft = 0, height_inch = 0, weight_kg = 0, weight_lb = 0, ethnicity, hypertension, diabetes, causeofdeath, creatinine, hcv, dcdstatus, creatinine_units = "micromol/l",
               # which calculated parameter to return from the function
               return_output_type = "KDPI",
               # which year for coefficients and KDPI mapping values to use - by default the latest available in the tables ktx.kdpi_mapping_table and ktx.kdpi_coefficients_table
@@ -164,9 +164,9 @@ ktx.kdpi.optn <- function (
   if( length(return_output_type) != 1 ){
     stop("The value for 'return_output_type' has to be a single character string. ", "The execution of the function is interrupted.", "\n")
   }
-  # check that user defined a single creatinineunits
-  if( length(creatinineunits) != 1 ){
-    stop("The value for 'creatinineunits' has to be a single character string. ", "The execution of the function is interrupted.", "\n")
+  # check that user defined a single creatinine_units
+  if( length(creatinine_units) != 1 ){
+    stop("The value for 'creatinine_units' has to be a single character string. ", "The execution of the function is interrupted.", "\n")
   }
 
   # check the range of output params
@@ -174,10 +174,10 @@ ktx.kdpi.optn <- function (
   if (!service.is.param_possible(return_output_type, possible_params)){
     stop("The defined by user value '", return_output_type, "' for 'return_output_type' is not among possible values of the parameter. ", "The execution of the function is interrupted.", "\n")
   }
-  # check the range of creatinineunits
+  # check the range of creatinine_units
   possible_params = c("mg/dl", "micromol/l", "mmol/l")
-  if (!service.is.param_possible(tolower(creatinineunits), possible_params)){
-    stop("The defined by user value '", creatinineunits, "'for 'creatinineunits' is not among possible values of the parameter. ", "The execution of the function is interrupted.", "\n")
+  if (!service.is.param_possible(tolower(creatinine_units), possible_params)){
+    stop("The defined by user value '", creatinine_units, "'for 'creatinine_units' is not among possible values of the parameter. ", "The execution of the function is interrupted.", "\n")
   }  
   
   # Check whether numericl arguments inputed by user are fine (weight, height etc have to be positive numbers)
@@ -226,19 +226,19 @@ ktx.kdpi.optn <- function (
   # age
   # for age calculate suspiciosly_low twice: first time for warning if <0, seond time for cat if <17
   suspiciosly_low <- service.count_lowerequal_threshhold(age, 0)
-  if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "negative values for age", "NA"))
+  if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "negative values for age", "NA"))
   suspiciosly_high <- service.count_greater_threshhold(age, 100)
-  if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "age >100 years", "NA"))
+  if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "age >100 years", "NA"))
   age <- service.strict_to_numeric_threshhold_lower(age, 0)
   age <- service.strict_to_numeric_threshhold_greater(age, 100)
   suspiciosly_low <- service.count_lowerequal_threshhold(age, 17)
-  if(suspiciosly_low > 0) cat(service.kdpi.optn.output_message(suspiciosly_low, "age <=17 years", "as is"))
+  if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <=17 years", "as is"))
   # height_cm
   if ("height_cm" %in% args){
     suspiciosly_low <- service.count_lowerequal_threshhold(height_cm, 100)
     suspiciosly_high <- service.count_greater_threshhold(height_cm, 230)
-    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "height <= 100 cm", "NA"))
-    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "height > 230 cm", "NA"))
+    if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "height <= 100 cm", "NA"))
+    if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "height > 230 cm", "NA"))
     height_cm <- service.strict_to_numeric_threshhold_lower(height_cm, 100)
     height_cm <- service.strict_to_numeric_threshhold_greater(height_cm, 230)
   }
@@ -246,23 +246,23 @@ ktx.kdpi.optn <- function (
   if ("height_ft" %in% args){
     suspiciosly_low <- service.count_lowerequal_threshhold(height_ft, 3)
     suspiciosly_high <- service.count_greater_threshhold(height_ft, 8)
-    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "height <= 3 feet", "NA"))
-    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "height > 8 feet", "NA"))
+    if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "height <= 3 feet", "NA"))
+    if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "height > 8 feet", "NA"))
     height_ft <- service.strict_to_numeric_threshhold_lower(height_ft, 3)
     height_ft <- service.strict_to_numeric_threshhold_greater(height_ft, 8)
   }
   # height_inch
   if ("height_inch" %in% args){
     suspiciosly_low <- service.count_lowerequal_threshhold(height_inch, -0.001)
-    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "negative values of inches", "NA"))
+    if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "negative values of inches", "NA"))
     height_inch <- service.strict_to_numeric_threshhold_lower(height_inch, -0.001) # since 0 is possible value for inches
   }
   # weight_kg
   if ("weight_kg" %in% args){
     suspiciosly_low <- service.count_lowerequal_threshhold(weight_kg, 30)
     suspiciosly_high <- service.count_greater_threshhold(weight_kg, 300)
-    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "weight <= 30 kg", "NA"))
-    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "weight > 300 kg", "NA"))
+    if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "weight <= 30 kg", "NA"))
+    if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "weight > 300 kg", "NA"))
     weight_kg <- service.strict_to_numeric_threshhold_lower(weight_kg, 30)
     weight_kg <- service.strict_to_numeric_threshhold_greater(weight_kg, 300)
   }
@@ -270,14 +270,14 @@ ktx.kdpi.optn <- function (
   if ("weight_lb" %in% args){
     suspiciosly_low <- service.count_lowerequal_threshhold(weight_lb, 65)
     suspiciosly_high <- service.count_greater_threshhold(weight_lb, 650)
-    if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "weight <= 65 lb", "NA"))
-    if(suspiciosly_high > 0) warning(service.kdpi.optn.output_message(suspiciosly_high, "weight > 650 lb", "NA"))
+    if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "weight <= 65 lb", "NA"))
+    if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "weight > 650 lb", "NA"))
     weight_kg <- service.strict_to_numeric_threshhold_lower(weight_lb, 65)
     weight_kg <- service.strict_to_numeric_threshhold_greater(weight_lb, 650)
   }
   # creatinine
   suspiciosly_low <- service.count_lowerequal_threshhold(creatinine, 0)
-  if(suspiciosly_low > 0) warning(service.kdpi.optn.output_message(suspiciosly_low, "creatinine <=0", "NA"))
+  if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "creatinine <=0", "NA"))
   creatinine <- service.strict_to_numeric_threshhold_lower(creatinine, 0)
 
   # CHECK FUNCTION INPUT: END
@@ -367,20 +367,20 @@ ktx.kdpi.optn <- function (
   ##################################################################
 
   #
-  # repeat creatinineunits according to the length of the file, since the creatinineunits is defined either by user or by default value as a single value for the whole function
+  # repeat creatinine_units according to the length of the file, since the creatinine_units is defined either by user or by default value as a single value for the whole function
   #
   # convert to lower case to avoid any troubles with possible definitions as "mg/dl" or "mg/dL"
-  creatinineunits <- tolower(creatinineunits)
-  creatinineunits <- rep(creatinineunits, length(creatinine))  
+  creatinine_units <- tolower(creatinine_units)
+  creatinine_units <- rep(creatinine_units, length(creatinine))  
   
   #
   # convert creatinine units if necessary
   #
-  creatinine <- ifelse (  creatinineunits == "mg/dl",
+  creatinine <- ifelse (  creatinine_units == "mg/dl",
               creatinine, # do nothing 
-              ifelse(  creatinineunits == "micromol/l",
+              ifelse(  creatinine_units == "micromol/l",
                   creatinine / 88.4,
-                  ifelse(  creatinineunits == "mmol/l",
+                  ifelse(  creatinine_units == "mmol/l",
                     1000 * creatinine / 88.4,
                     NA # if any other undefined units is used, assume NA
                   )

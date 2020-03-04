@@ -6,10 +6,12 @@
 \usage{
 ktx.kdpi.optn(age, height_cm = 0, height_ft = 0, height_inch = 0,
   weight_kg = 0, weight_lb = 0, ethnicity, hypertension, diabetes,
-  causeofdeath, creatinine, hcv, dcdstatus, creatinineunits = "micromol/l",
-  return_output_type = "KDPI", mapping_values_year = "latest",
+  causeofdeath, creatinine, hcv, dcdstatus,
+  creatinine_units = "micromol/l", return_output_type = "KDPI",
+  mapping_values_year = "latest",
   label_afroamerican = c("Afroamerican"),
-  label_hypertension_positive = c("yes"), label_hypertension_unknown = "NA",
+  label_hypertension_positive = c("yes"),
+  label_hypertension_unknown = "NA",
   label_diabetes_positive = c("yes"), label_diabetes_unknown = "NA",
   label_causeofdeath = c("cva"), label_hcv_positive = c("positive"),
   label_hcv_unknown = "NA", label_dcdstatus = c("yes"))
@@ -37,13 +39,13 @@ If the parameter weight_kg is greater than 0, the function uses kg, otherwise - 
 
 \item{causeofdeath}{Vector. Cause of death, specify whether death was due to cerebrovascular disease, or other reasons.}
 
-\item{creatinine}{Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinineunits (if not defined explicitly by user, the default value is "micromol/L").}
+\item{creatinine}{Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinine_units (if not defined explicitly by user, the default value is "micromol/L").}
 
 \item{hcv}{Vector. Hepatitis C virus status. The value of variable refers to the parameters label_hcv_positive and label_hcv_unknown.}
 
 \item{dcdstatus}{Vector. Donation after circulatory death status. Specify whether organ was from a donor after circulatory death or not. The value of variable refers to the parameter label_dcdstatus.}
 
-\item{creatinineunits}{Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".}
+\item{creatinine_units}{Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".}
 
 \item{return_output_type}{Character string. Specify which calculated parameter to return from the function: "KDRI_Rao" - Raw Kidney Donor Risk Index, "KDRI_median" - scaled to the median Kidney Donor Risk Index, or "KDPI" - Kidney Donor Profile Index.}
 
@@ -99,7 +101,7 @@ Citation: Bikbov B. R open source programming code for calculation of the Kidney
 ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White",
   hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury",
   creatinine = 1.4, hcv = "negative", dcdstatus = "no",
-  creatinineunits = "mg/dl", return_output_type = "KDRI_Rao")
+  creatinine_units = "mg/dl", return_output_type = "KDRI_Rao")
 ktx.kdpi.optn (age = 30, height_cm = 176, weight_kg = 82, ethnicity = "White", 
   hypertension = "NA", diabetes = "no", causeofdeath = "roadinjury", 
   creatinine = 150, hcv = "negative", dcdstatus = "no", return_output_type = "KDPI")

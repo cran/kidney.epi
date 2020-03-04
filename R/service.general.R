@@ -31,6 +31,44 @@ service.is.param_possible <- function(param2check, possible_params){
 
 
 
+
+
+#' Check the argument of a given parameter which set by user and stop function if the value set by user is not among the possible values of the argument 
+#' @details Check the argument of a given parameter whichset by user and stop function if the value set by user is not among the possible values of the argument.
+#' Service function that will not be exported to user.
+#' 
+#' Programming: Boris Bikbov \email{boris@@bikbov.ru}.
+#'
+#' @param param2check List, Character string, Number. Parameter used in a function.
+#' @param possible_params List. List of possible values of the parameter arguments
+#' @param custom_message Character string. Custom message to be output. If not defined, the standart output message is provided.
+#' nothing to return
+#' @name service.check_param_arguments
+# @examples
+# service.check_param_arguments(creatinine_method, possible_params)
+# 
+##################################################################
+# FUNCTION: BEGIN
+service.check_param_arguments <- function(param2check, possible_params, custom_message = ""){
+
+  # set possible value to lowercase
+  possible_params <- tolower(possible_params)
+  
+  if (!service.is.param_possible(tolower(param2check), possible_params)){
+    if( length(custom_message) > 0){
+        warning(custom_message)
+    }
+	# use deparse and substitute to get the name of a function argument
+    stop("The defined by user value '", param2check, "' for parameter '", deparse(substitute(param2check)), "' is not among possible values of the parameter. ", "The execution of the function is interrupted.", "\n")
+  }  
+
+}
+# FUNCTION: END
+##################################################################
+
+
+
+
 #' Select only numeric values greater than defined threshhold.
 #' @details Select only numeric values greater than defined threshhold, and substitute other values with NA. 
 #' 
@@ -204,13 +242,13 @@ service.singular_or_plural <- function(x, singular, plural){
 #' @param custom_phrase Character string. Custom message to be inserted in the middle of standard message.
 #' @param warning_type Character string. The type of message: warning (with substitution to NA) or cat (with leave as is).
 #' @return Character string. Returns a phrase.
-#' @name service.kdpi.optn.output_message
+#' @name service.output_message
 # @examples
-# service.kdpi.optn.output_message(suspiciosly_high, "age >100 years", "NA")
+# service.output_message(suspiciosly_high, "age >100 years", "NA")
 # 
 ##################################################################
 # FUNCTION: BEGIN
-service.kdpi.optn.output_message <- function(x, custom_phrase, warning_type){
+service.output_message <- function(x, custom_phrase, warning_type){
   if(warning_type == "NA"){
     last_sentence = paste(" ", service.singular_or_plural(x, "This value was", "These values were"), " substituted to NA.", sep = "")
   }else if(warning_type == "as is"){
@@ -223,4 +261,160 @@ service.kdpi.optn.output_message <- function(x, custom_phrase, warning_type){
 }
 # FUNCTION: END
 ##################################################################
+
+
+
+
+
+
+#' Check whether all obligatory paramenters of a given function are present.
+#' @details Check whether all obligatory paramenters of a given function are present. 
+#' 
+#' Programming: Boris Bikbov \email{boris@@bikbov.ru}.
+#'
+#' @param fx_params List. List of parameters required by function.
+#' @param args List. Arguments transferred to the function upon user call.
+#' @param predefined_result Logical. Required only in case if other checks were performed in the main script and the result of this check has to be processed to the function.
+#'    For example, if in the parent script I've checked the presence of height parameter, and it is absent (while is obligatory), I transfer this info in the "predefined_result = FALSE", so in the function the fx_params_resulting become False and will lead to stop().
+#' @return Character string. Returns a messages and stops function if any of the obligatory parameters are absent.
+#' @export
+#' @name service.check_obligatory_params
+#' @examples
+#' # could be run only inside function wich receives some parameters 
+#' # fx_params <- c("creatinine", "age", "ethnicity", "sex")
+#' # args <- names(as.list(match.call())[-1])
+#' # service.check_obligatory_params(fx_params, args)
+##################################################################
+# FUNCTION: BEGIN
+service.check_obligatory_params <- function(fx_params, args, predefined_result = TRUE){
+  # at the beginning assume that all function arguments are present, and in the following code change it to FALSE if any of the obligatory argument(s) is(are) absent
+  fx_params_resulting <- TRUE
+  err_num <- 0
+  
+  # if the predefined_result is already suggesting about a missing parameter revealed in the parent script
+  if(predefined_result == FALSE){
+    fx_params_resulting <- FALSE
+    err_num <- 1
+  }
+  
+  # Check whether all necessary params are defined by user
+  for(i in 1:length(fx_params)){
+    fx_param_local <- fx_params[i] %in% args # whether param is found among the obligatory 
+    if( fx_param_local == FALSE ){
+      warning("Obligatory argument ", fx_params[i], " is not defined by user in the function arguments", "\n")
+      err_num <- err_num + 1
+    }
+    fx_params_resulting <- fx_params_resulting && fx_param_local
+  }
+  
+  # final message if any of the Obligatory arguments are missing
+  if(fx_params_resulting == FALSE){
+    stop("Obligatory argument", service.singular_or_plural(err_num, "", "s"), service.singular_or_plural(err_num, " is ", " are "), " not defined by user", "\n", "The execution of the function is interrupted.", "\n")
+  }
+  
+  #return TRUE
+}
+# FUNCTION: END
+##################################################################
+
+
+
+
+
+
+
+
+#' Check number of parameters and stop function if it exceeds the expected number of parameters 
+#' @details Check number of parameters and stop function if it exceeds the expected number of parameters.
+#' Service function that will not be exported to user.
+#' 
+#' Programming: Boris Bikbov \email{boris@@bikbov.ru}.
+#'
+#' @param param2check List, Character string, Number. Parameter used in a function.
+#' @param acceptable_number Numeric. Acceptable number of arguments in the list param2check (by default is "1")
+#' @param custom_message Character string. Custom message to be output. If not defined, the standart output message is provided.
+#' nothing to return
+#' @name service.check_param_number
+# @examples
+# service.check_param_number(creatinine_method)
+# service.check_param_number(param2check = creatinine_method, acceptable_number = 1)
+# 
+##################################################################
+# FUNCTION: BEGIN
+service.check_param_number <- function(param2check, acceptable_number = 1, custom_message = ""){
+
+  if( length(param2check) != acceptable_number ){
+    if( length(custom_message) > 0){
+        warning(custom_message)
+    }
+	# use deparse and substitute to get the name of a function argument
+    stop("The value for '", deparse(substitute(param2check)), "' has to be a single character string. ", "The execution of the function is interrupted.", "\n")
+  }
+}
+# FUNCTION: END
+##################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+#' Check whether the following variables are numeric and stop function if at least one of them is not numeric 
+#' @details Check whether the following variables are numeric and stop function if at least one of them is not numeric.
+#' Service function that will not be exported to user.
+#' 
+#' Programming: Boris Bikbov \email{boris@@bikbov.ru}.
+#'
+#' @param ... Argument list. Argument list (arbitruary number of valiables) with data to check.
+#' nothing to return
+#' @name service.check_params_numeric
+# @examples
+# service.check_params_numeric(creatinine, albumin)
+# 
+##################################################################
+# FUNCTION: BEGIN
+service.check_params_numeric <- function(...){
+
+  # check and inform user whether argument contains non-numeric values
+  numeric_resulting = TRUE # assume that all arguments are numeric
+
+  # construct object from the variables defined by user
+  # to avoid conversion of numeric values to factor necessary to use rbind.data.frame and cbind.data.frame instead of rbind and cbind
+  dta <- cbind.data.frame(...)
+  # define number of variables
+  n <- length(dta)
+
+  for(i in 1:n){
+    # things are rather complicated
+    # dta is a list which consists from several variables. to get all values of a single variable I need [[]], but the name of the variable should be taken from the list (so use [] only)
+    values2check <- dta[[i]]
+    varname <- names(dta[i])
+    numeric_local <- service.is_numeric(values2check)
+	# numeric_local <- !is.na(as.numeric(values2check)) - doesn't work good
+	# numeric_local <- sapply(values2check, is.numeric) - doesn't work good
+    if(!numeric_local) warning(varname, " is non-numeric argument.", "\n")
+    numeric_resulting <- numeric_local && numeric_resulting # if any of the argument is non-numeric, the numeric_resulting become FALSE
+  }
+
+  # resulting message for numeric check
+  if(!numeric_resulting){
+    stop("At least one of the defined by user arguments is not numeric.", " The execution of the function is interrupted.", "\n")
+  }
+}
+# FUNCTION: END
+##################################################################
+
+
+
+
+
+
+
+
 

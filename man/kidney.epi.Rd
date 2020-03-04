@@ -5,6 +5,6 @@
 \title{Kidney functions for R: clinical and epidemiological}
 \description{
 Package contains different functions for use in the field of kidney disease and general epidemiology
-Current version contains only function for calculation of KDPI and KDRI for kidney transplant donors.
-However, more functions are coming soon.
+Current version contains functions for calculation of estimated GFR by different equations, and calculation of KDPI and KDRI for kidney transplant donors.
+More functions are coming soon.
 }

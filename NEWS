@@ -1,3 +1,9 @@
+# kidney.epi 1.2.0
+* add a set of functions for estimated glomerular filtration rate (eGFR) calculation
+* add OPTN mapping values for the years 2018 and 2014
+* changed parameter name from creatinineunits to creatinine_units in function ktx.kdpi.optn
+* introduce additional service functions
+
 # kidney.epi 1.1.0
 * introduce service functions
 * add OPTN mapping values for the year 2017 to the internal dataframes in sysdata.rda

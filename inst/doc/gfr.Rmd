@@ -1,0 +1,77 @@
+---
+title: "Estimated glomerular filtration rate (eGFR) calculation"
+author: "Boris Bikbov"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimated glomerular filtration rate (eGFR) calculation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Estimated glomerular filtration rate (eGFR) calculation
+
+kidney.epi R package includes functions for calculation of eGFR by different equations.
+
+See also: [kidneyepidemiology.org web site] [id]
+
+## Dataframes
+
+* ktx - contains data for 10 kidney transplant patients (*see description in documentation*).
+
+```{r}
+library(kidney.epi)
+head(ktx)
+```
+
+## Functions
+
+### Calculate eGFR by different equations
+
+There is a set of functions which calculate eGFR by different equations either for a single patient or for a dataset.
+
+Currently, the following eGFR equations are supported:
+- CKD-EPI: function `egfr.ckdepi`
+- MDRD: function `egfr.mdrd4`
+- Schwartz: function `egfr.schwartz`
+
+If you use these functions and kidney.epi package for preparation of a manuscript, please use the following citation: "Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Disease. 2018; 4:269–272 \doi:10.1159/000492427".
+
+
+To calculate for a single patient, use the following syntax:
+```{r}
+# call egfr.ckdepi function, and directly set parameters values
+egfr.ckdepi (creatinine = 1.4, age = 60, sex = "Male", ethnicity = "White", creatinine_units = "mg/dl", label_afroamerican = c ("Afroamerican"), label_sex_male = c ("Male"), label_sex_female = c ("Female"))
+```
+
+To calculate for a multiple patients in a dataset, use the following syntax:
+```{r}
+# copy as an example the internal dataframe ktx from R package to your dataframe
+mydata <- ktx
+
+# calculate eGFR by CKD-EPI equation
+mydata$ckdepi <- egfr.ckdepi ( creatinine = mydata$don.creatinine, age = mydata$don.age,
+  sex = mydata$don.sex, ethnicity = mydata$don.ethnicity, creatinine_units = "mg/dl",
+  # customize all labels used in the dataframe
+  label_afroamerican = c ("Afroamerican"),
+  label_sex_male = c ("Male"), label_sex_female = c ("Female")) 
+
+# show descriptive stat for the calculated values
+summary(mydata$ckdepi)
+```
+
+Take into account that the labels defined in the function parameters have to correspond to the labels used in your data frame. In the example above label for male sex is defined as *label_sex_male = c ("Male")* that means in the data frame it should be "Male". In case you use different labelling in your data frame, define this appropriatelly. For example, if you define female sex as "F" and male sex as "M" in your data frame,  you have to change the labeling in paremeters of the function to *label_sex_male = c ("M"), label_sex_female = c ("F")*.
+
+
+## References
+References for each eGFR equation are listed in the documentation to the package.
+
+
+[id]: http://www.kidneyepidemiology.org/r "Title"
