@@ -1,9 +1,11 @@
-citHeader("To cite the function of the kidney.epi package in publications use:")
-citEntry(entry = "Article", 
-    author = personList(as.person("Boris Bikbov")), title = "R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index", 
-    journal = "Kidney Diseases", year = 2018, 
-    volume = "4", pages = "269–-272", 
-    url = "https://doi.org/10.1159/000492427", 
-    textVersion = paste("Bikbov B. (2018)", 
-        "R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index", 
-        "Kidney Diseases. 4:269--272"))
+citHeader("To cite the kidney.epi package in publications use:")
+bibentry(bibtype = "Manual", 
+    author = c(as.person("Bikbov Boris")), 
+	title = "kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research", 
+	year = 2025, 
+	organization = "Scientific-Tools.Org",
+    url = "https://Scientific-Tools.Org", 
+	doi = "10.32614/CRAN.package.kidney.epi",
+    textVersion = paste("Bikbov B.", 
+        "kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research.", 
+        "Scientific-Tools.Org, https://Scientific-Tools.Org. DOI: 10.32614/CRAN.package.kidney.epi"))

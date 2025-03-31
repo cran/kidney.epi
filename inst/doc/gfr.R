@@ -1,28 +1,58 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(kidney.epi)
-head(ktx)
+head(ckd.data)
 
-## ------------------------------------------------------------------------
-# call egfr.ckdepi function, and directly set parameters values
-egfr.ckdepi (creatinine = 1.4, age = 60, sex = "Male", ethnicity = "White", creatinine_units = "mg/dl", label_afroamerican = c ("Afroamerican"), label_sex_male = c ("Male"), label_sex_female = c ("Female"))
+## -----------------------------------------------------------------------------
+# call egfr.ckdepi.cr.2009 function, and directly set parameters values
+egfr.ckdepi.cr.2009(
+  creatinine = 1.4,  
+  age = 60,  
+  sex = "Male", 
+  ethnicity = "White", 
+  creatinine_units = "mg/dl", 
+  label_afroamerican = c("Afroamerican"), 
+  label_sex_male = c("Male"), 
+  label_sex_female = c("Female")
+)
 
-## ------------------------------------------------------------------------
-# copy as an example the internal dataframe ktx from R package to your dataframe
-mydata <- ktx
+# Definitions of the labels for sex and race are optional if you use the same labels defined as default in the function. The following also works well:
+egfr.ckdepi.cr.2009(
+  creatinine = 1.4,  
+  age = 60,  
+  sex = "Male", 
+  ethnicity = "White", 
+  creatinine_units = "mg/dl"
+)
+
+# If you measure creatinine in micromol/l, it is possible to omit also 'creatinine_units' since the default value is "micromol/l":
+egfr.ckdepi.cr.2009(
+  creatinine = 103, # creatinine is in micromol/l
+  age = 60,  
+  sex = "Male", 
+  ethnicity = "White"
+)
+
+## -----------------------------------------------------------------------------
+# copy as an example the internal dataframe ckd.data from R package to your dataframe
+mydata <- ckd.data
 
 # calculate eGFR by CKD-EPI equation
-mydata$ckdepi <- egfr.ckdepi ( creatinine = mydata$don.creatinine, age = mydata$don.age,
-  sex = mydata$don.sex, ethnicity = mydata$don.ethnicity, creatinine_units = "mg/dl",
-  # customize all labels used in the dataframe
-  label_afroamerican = c ("Afroamerican"),
-  label_sex_male = c ("Male"), label_sex_female = c ("Female")) 
+mydata$ckdepi <- egfr.ckdepi.cr.2009(
+  creatinine = mydata$cr, age = mydata$age,
+  sex = mydata$sex, ethnicity = mydata$ethnicity,
+  creatinine_units = "micromol/L",
+  # customize all labels for those used in the data frame if necessary
+  label_afroamerican = c("Black"),
+  label_sex_male = c("Male"), label_sex_female = c("Female")
+) 
 
 # show descriptive stat for the calculated values
+# note that synthetic data set ckd.data contains input parameters for both adults and children, and since the CKD-EPI equation was developed and validated for adults only, the resulting eGFR values for children will be NA. Use children-specific eGFR equations when necessary.
 summary(mydata$ckdepi)
 

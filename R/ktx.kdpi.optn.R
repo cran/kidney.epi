@@ -7,13 +7,13 @@
 #' More reading:
 #' \itemize{
 #'   \item \href{https://optn.transplant.hrsa.gov/resources/allocation-calculators/kdpi-calculator/}{OPTN web-based calculator}
-#'   \item \href{https://optn.transplant.hrsa.gov/media/1512/guide_to_calculating_interpreting_kdpi.pdf}{Guide to calculating and interpreting KDPI}
+#'   \item \href{https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/learn-about-kdpi/}{Guide to calculating and interpreting KDPI}
 #'   \item \href{https://optn.transplant.hrsa.gov/media/2150/kdpi_mapping_table.pdf}{Latest data for mapping table, scaling factor, etc}
 #' }
 #' 
-#' Programming: Boris Bikbov \email{boris@@bikbov.ru}.
+#' Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Diseases, 2018; 4:269–272. DOI: 10.1159/000492427
 #'
-#' Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Diseases, 2018. DOI: 10.1159/000492427
+#' @author Programming: Boris Bikbov https://www.linkedin.com/in/boris-bikbov.
 #'
 #' @param age Numeric vector. Age, in years.
 #' @param height_cm Numeric vector. Could be defined either as height_cm if is measured in cm, or as height_ft and height_inch if is measured in feet and inches.
@@ -52,60 +52,58 @@
 #' @export
 #' @name ktx.kdpi.optn
 #' @examples
+#' # for a single patient
 #' ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White",
 #'   hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury",
 #'   creatinine = 1.4, hcv = "negative", dcdstatus = "no",
 #'   creatinine_units = "mg/dl", return_output_type = "KDRI_Rao")
 #' ktx.kdpi.optn (age = 30, height_cm = 176, weight_kg = 82, ethnicity = "White", 
-#'   hypertension = "NA", diabetes = "no", causeofdeath = "roadinjury", 
+#'   hypertension = "NA", diabetes = "no", causeofdeath = "roadinjury", # note that NA is in the quotes
 #'   creatinine = 150, hcv = "negative", dcdstatus = "no", return_output_type = "KDPI")
-
+#' # for a dataset - see vignettes for details
 
 ##################################################################
 # FUNCTION: BEGIN
 
-ktx.kdpi.optn <- function (
-              # variables for calculation of KDPI/KDRI
-              age, height_cm = 0, height_ft = 0, height_inch = 0, weight_kg = 0, weight_lb = 0, ethnicity, hypertension, diabetes, causeofdeath, creatinine, hcv, dcdstatus, creatinine_units = "micromol/l",
-              # which calculated parameter to return from the function
-              return_output_type = "KDPI",
-              # which year for coefficients and KDPI mapping values to use - by default the latest available in the tables ktx.kdpi_mapping_table and ktx.kdpi_coefficients_table
-              mapping_values_year = "latest",
-              # custom labels for factor parameters and their unknown values
-                  # introduce variables' labels which any user can adapt to their own labeling in the data file
-                  # all labels could be a character, numeric, vector, or list - whatever you prefer
-                  # you have to change the labels according your data file
-                  #  for example:
-                  #    if donors with a history of hypertension in your data file defined as "hypertensive", you have to change below the variable label_hypertension_positive = "hypertensive";
-                  #    if you use 1 for donors with a history of hypertension, you have to change below the variable label_hypertension_positive = 1
-                  # be careful with labeling of missing/unknown data for a history of hypertension, diabetes, HCV
-                  #    if donors with an unknown history of hypertension in your data file has a missing value, set the variable label_hypertension_unknown = "NA" (with quotes!)
-                  #    if donors with an unknown history of hypertension in your data file defined as "no data", set the variable label_hypertension_unknown = "no data"
-                  #    if donors with an unknown history of hypertension in your data file defined as 999, set the variable label_hypertension_unknown = 999
-                  #
-                  # label for Afroamerican ethnicity
-                  label_afroamerican = c ("Afroamerican"),
-                  # label for a positive history of hypertension
-                  label_hypertension_positive = c ("yes"),
-                  # label for an unknown history of hypertension
-                  label_hypertension_unknown = "NA", # if missing values defined unknown history then use "NA" (with quotes!)
-                  # label for a positive history of diabetes
-                  label_diabetes_positive = c ("yes"),
-                  # label for an unknown history of diabetes
-                  label_diabetes_unknown = "NA", # if missing values defined unknown history then use "NA" (with quotes!)
-                  # label for a cause of death due to cerebrovascular/stroke
-                  label_causeofdeath = c ("cva"),
-                  # label for a positive hcv status
-                  label_hcv_positive = c ("positive"),
-                  # label for an unknown, not done, indeterminate, or pending hcv status
-                  label_hcv_unknown = "NA", # if missing values defined unknown history then use "NA" (with quotes!)
-                  # label for a donation after circulatory death status
-                  label_dcdstatus = c ("yes")
-              # end of function parameters definition
-              ){
-  
+ktx.kdpi.optn <- function(
+  # variables for calculation of KDPI/KDRI
+  age, height_cm = 0, height_ft = 0, height_inch = 0, weight_kg = 0, weight_lb = 0, ethnicity, hypertension, diabetes, causeofdeath, creatinine, hcv, dcdstatus, creatinine_units = "micromol/l",
+  # which calculated parameter to return from the function
+  return_output_type = "KDPI",
+  # which year for coefficients and KDPI mapping values to use - by default the latest available in the tables ktx.kdpi_mapping_table and ktx.kdpi_coefficients_table
+  mapping_values_year = "latest",
+  # custom labels for factor parameters and their unknown values
+    # introduce variables' labels which any user can adapt to their own labeling in the data file
+    # all labels could be a character, numeric, vector, or list - whatever you prefer
+    # you have to change the labels according your data file
+    #  for example:
+    #    if donors with a history of hypertension in your data file defined as "hypertensive", you have to change below the variable label_hypertension_positive = "hypertensive";
+    #    if you use 1 for donors with a history of hypertension, you have to change below the variable label_hypertension_positive = 1
+    # be careful with labeling of missing/unknown data for a history of hypertension, diabetes, HCV
+    #    if donors with an unknown history of hypertension in your data file has a missing value, set the variable label_hypertension_unknown = "NA" (with quotes!)
+    #    if donors with an unknown history of hypertension in your data file defined as "no data", set the variable label_hypertension_unknown = "no data"
+    #    if donors with an unknown history of hypertension in your data file defined as 999, set the variable label_hypertension_unknown = 999
+    #
+    # label for Afroamerican ethnicity
+    label_afroamerican = c ("Afroamerican"),
+    # label for a positive history of hypertension
+    label_hypertension_positive = c ("yes"),
+    # label for an unknown history of hypertension
+    label_hypertension_unknown = "NA", # if missing values defined unknown history then use "NA" (with quotes!)
+    # label for a positive history of diabetes
+    label_diabetes_positive = c ("yes"),
+    # label for an unknown history of diabetes
+    label_diabetes_unknown = "NA", # if missing values defined unknown history then use "NA" (with quotes!)
+    # label for a cause of death due to cerebrovascular/stroke
+    label_causeofdeath = c ("cva"),
+    # label for a positive hcv status
+    label_hcv_positive = c ("positive"),
+    # label for an unknown, not done, indeterminate, or pending hcv status
+    label_hcv_unknown = "NA", # if missing values defined unknown history then use "NA" (with quotes!)
+    # label for a donation after circulatory death status
+    label_dcdstatus = c ("yes")
+) {
 
-  
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
   
@@ -225,60 +223,60 @@ ktx.kdpi.optn <- function (
   #   after the check chnge the value to boundaries in the possible range (i.e. age > 0 and < 100)
   # age
   # for age calculate suspiciosly_low twice: first time for warning if <0, seond time for cat if <17
-  suspiciosly_low <- service.count_lowerequal_threshhold(age, 0)
+  suspiciosly_low <- service.count_lowerequal_threshold(age, 0)
   if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "negative values for age", "NA"))
-  suspiciosly_high <- service.count_greater_threshhold(age, 100)
+  suspiciosly_high <- service.count_greater_threshold(age, 100)
   if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "age >100 years", "NA"))
-  age <- service.strict_to_numeric_threshhold_lower(age, 0)
-  age <- service.strict_to_numeric_threshhold_greater(age, 100)
-  suspiciosly_low <- service.count_lowerequal_threshhold(age, 17)
+  age <- service.strict_to_numeric_threshold_lower(age, 0)
+  age <- service.strict_to_numeric_threshold_greater(age, 100)
+  suspiciosly_low <- service.count_lowerequal_threshold(age, 17)
   if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <=17 years", "as is"))
   # height_cm
   if ("height_cm" %in% args){
-    suspiciosly_low <- service.count_lowerequal_threshhold(height_cm, 100)
-    suspiciosly_high <- service.count_greater_threshhold(height_cm, 230)
+    suspiciosly_low <- service.count_lowerequal_threshold(height_cm, 100)
+    suspiciosly_high <- service.count_greater_threshold(height_cm, 230)
     if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "height <= 100 cm", "NA"))
     if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "height > 230 cm", "NA"))
-    height_cm <- service.strict_to_numeric_threshhold_lower(height_cm, 100)
-    height_cm <- service.strict_to_numeric_threshhold_greater(height_cm, 230)
+    height_cm <- service.strict_to_numeric_threshold_lower(height_cm, 100)
+    height_cm <- service.strict_to_numeric_threshold_greater(height_cm, 230)
   }
   # height_ft
   if ("height_ft" %in% args){
-    suspiciosly_low <- service.count_lowerequal_threshhold(height_ft, 3)
-    suspiciosly_high <- service.count_greater_threshhold(height_ft, 8)
+    suspiciosly_low <- service.count_lowerequal_threshold(height_ft, 3)
+    suspiciosly_high <- service.count_greater_threshold(height_ft, 8)
     if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "height <= 3 feet", "NA"))
     if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "height > 8 feet", "NA"))
-    height_ft <- service.strict_to_numeric_threshhold_lower(height_ft, 3)
-    height_ft <- service.strict_to_numeric_threshhold_greater(height_ft, 8)
+    height_ft <- service.strict_to_numeric_threshold_lower(height_ft, 3)
+    height_ft <- service.strict_to_numeric_threshold_greater(height_ft, 8)
   }
   # height_inch
   if ("height_inch" %in% args){
-    suspiciosly_low <- service.count_lowerequal_threshhold(height_inch, -0.001)
+    suspiciosly_low <- service.count_lowerequal_threshold(height_inch, -0.001)
     if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "negative values of inches", "NA"))
-    height_inch <- service.strict_to_numeric_threshhold_lower(height_inch, -0.001) # since 0 is possible value for inches
+    height_inch <- service.strict_to_numeric_threshold_lower(height_inch, -0.001) # since 0 is possible value for inches
   }
   # weight_kg
   if ("weight_kg" %in% args){
-    suspiciosly_low <- service.count_lowerequal_threshhold(weight_kg, 30)
-    suspiciosly_high <- service.count_greater_threshhold(weight_kg, 300)
+    suspiciosly_low <- service.count_lowerequal_threshold(weight_kg, 30)
+    suspiciosly_high <- service.count_greater_threshold(weight_kg, 300)
     if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "weight <= 30 kg", "NA"))
     if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "weight > 300 kg", "NA"))
-    weight_kg <- service.strict_to_numeric_threshhold_lower(weight_kg, 30)
-    weight_kg <- service.strict_to_numeric_threshhold_greater(weight_kg, 300)
+    weight_kg <- service.strict_to_numeric_threshold_lower(weight_kg, 30)
+    weight_kg <- service.strict_to_numeric_threshold_greater(weight_kg, 300)
   }
   # weight_lb
   if ("weight_lb" %in% args){
-    suspiciosly_low <- service.count_lowerequal_threshhold(weight_lb, 65)
-    suspiciosly_high <- service.count_greater_threshhold(weight_lb, 650)
+    suspiciosly_low <- service.count_lowerequal_threshold(weight_lb, 65)
+    suspiciosly_high <- service.count_greater_threshold(weight_lb, 650)
     if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "weight <= 65 lb", "NA"))
     if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "weight > 650 lb", "NA"))
-    weight_kg <- service.strict_to_numeric_threshhold_lower(weight_lb, 65)
-    weight_kg <- service.strict_to_numeric_threshhold_greater(weight_lb, 650)
+    weight_kg <- service.strict_to_numeric_threshold_lower(weight_lb, 65)
+    weight_kg <- service.strict_to_numeric_threshold_greater(weight_lb, 650)
   }
   # creatinine
-  suspiciosly_low <- service.count_lowerequal_threshhold(creatinine, 0)
+  suspiciosly_low <- service.count_lowerequal_threshold(creatinine, 0)
   if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "creatinine <=0", "NA"))
-  creatinine <- service.strict_to_numeric_threshhold_lower(creatinine, 0)
+  creatinine <- service.strict_to_numeric_threshold_lower(creatinine, 0)
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -567,7 +565,7 @@ return (function_output)
 # Because list of years has to be the same in the ktx.kdpi_mapping_table and ktx.kdpi_coefficients_table (and this assumption is checked in the ktx.kdpi.optn function), I will look only into the ktx.kdpi_coefficients_table
 #' @export
 #' @name ktx.kdpi.optn.show.years
-ktx.kdpi.optn.show.years <- function (){
+ktx.kdpi.optn.show.years <- function() {
   
   list_of_years <- unique(ktx.kdpi_coefficients_table$coefficients_year)
   cat("The following years are presented in tables with OPTN mapping values, KDRI scaling factor, etc.", "\n")

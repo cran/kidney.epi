@@ -1,20 +1,31 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(kidney.epi)
-head(ktx)
+head(ktx.data)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # call ktx.kdpi.optn function, and directly set parameters values
-ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White", hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury", creatinine = 1.4, hcv = "negative", dcdstatus = "no", creatinine_units = "mg/dl", return_output_type = "KDRI_Rao")
+ktx.kdpi.optn(age = 60, 
+  height_cm = 168, 
+  weight_kg = 93, 
+  ethnicity = "White", 
+  hypertension = "yes", 
+  diabetes = "no", 
+  causeofdeath = "roadinjury", 
+  creatinine = 1.4, 
+  hcv = "negative", 
+  dcdstatus = "no", 
+  creatinine_units = "mg/dl", 
+  return_output_type = "KDRI_Rao")
 
-## ------------------------------------------------------------------------
-# copy internal dataframe ktx from R package to your dataframe
-mydata <- ktx
+## -----------------------------------------------------------------------------
+# copy internal dataframe ktx.data from the kidney.epiR package to your data frame
+mydata <- ktx.data
 
 # calculate Kidney Donor Profile Index (KDPI) using the latest available OPTN mapping values
 mydata$kdpi <- ktx.kdpi.optn ( age = mydata$don.age,
@@ -49,6 +60,6 @@ mydata$kdpi <- ktx.kdpi.optn ( age = mydata$don.age,
 # show descriptive stat for the calculated values
 summary(mydata$kdpi)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ktx.kdpi.optn.show.years()
 

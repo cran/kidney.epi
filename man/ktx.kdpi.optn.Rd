@@ -4,17 +4,33 @@
 \alias{ktx.kdpi.optn}
 \title{Calculate KDRI and KDPI for deceased kidney donor}
 \usage{
-ktx.kdpi.optn(age, height_cm = 0, height_ft = 0, height_inch = 0,
-  weight_kg = 0, weight_lb = 0, ethnicity, hypertension, diabetes,
-  causeofdeath, creatinine, hcv, dcdstatus,
-  creatinine_units = "micromol/l", return_output_type = "KDPI",
+ktx.kdpi.optn(
+  age,
+  height_cm = 0,
+  height_ft = 0,
+  height_inch = 0,
+  weight_kg = 0,
+  weight_lb = 0,
+  ethnicity,
+  hypertension,
+  diabetes,
+  causeofdeath,
+  creatinine,
+  hcv,
+  dcdstatus,
+  creatinine_units = "micromol/l",
+  return_output_type = "KDPI",
   mapping_values_year = "latest",
   label_afroamerican = c("Afroamerican"),
   label_hypertension_positive = c("yes"),
   label_hypertension_unknown = "NA",
-  label_diabetes_positive = c("yes"), label_diabetes_unknown = "NA",
-  label_causeofdeath = c("cva"), label_hcv_positive = c("positive"),
-  label_hcv_unknown = "NA", label_dcdstatus = c("yes"))
+  label_diabetes_positive = c("yes"),
+  label_diabetes_unknown = "NA",
+  label_causeofdeath = c("cva"),
+  label_hcv_positive = c("positive"),
+  label_hcv_unknown = "NA",
+  label_dcdstatus = c("yes")
+)
 }
 \arguments{
 \item{age}{Numeric vector. Age, in years.}
@@ -89,20 +105,23 @@ The Kidney Donor Profile Index (KDPI) is a numerical measure that combines ten d
 More reading:
 \itemize{
   \item \href{https://optn.transplant.hrsa.gov/resources/allocation-calculators/kdpi-calculator/}{OPTN web-based calculator}
-  \item \href{https://optn.transplant.hrsa.gov/media/1512/guide_to_calculating_interpreting_kdpi.pdf}{Guide to calculating and interpreting KDPI}
+  \item \href{https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/learn-about-kdpi/}{Guide to calculating and interpreting KDPI}
   \item \href{https://optn.transplant.hrsa.gov/media/2150/kdpi_mapping_table.pdf}{Latest data for mapping table, scaling factor, etc}
 }
 
-Programming: Boris Bikbov \email{boris@bikbov.ru}.
-
-Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Diseases, 2018. DOI: 10.1159/000492427
+Citation: Bikbov B. R open source programming code for calculation of the Kidney Donor Profile Index and Kidney Donor Risk Index. Kidney Diseases, 2018; 4:269–272. DOI: 10.1159/000492427
 }
 \examples{
+# for a single patient
 ktx.kdpi.optn (age = 60, height_cm = 168, weight_kg = 93, ethnicity = "White",
   hypertension = "yes", diabetes = "no", causeofdeath = "roadinjury",
   creatinine = 1.4, hcv = "negative", dcdstatus = "no",
   creatinine_units = "mg/dl", return_output_type = "KDRI_Rao")
 ktx.kdpi.optn (age = 30, height_cm = 176, weight_kg = 82, ethnicity = "White", 
-  hypertension = "NA", diabetes = "no", causeofdeath = "roadinjury", 
+  hypertension = "NA", diabetes = "no", causeofdeath = "roadinjury", # note that NA is in the quotes
   creatinine = 150, hcv = "negative", dcdstatus = "no", return_output_type = "KDPI")
+# for a dataset - see vignettes for details
+}
+\author{
+Programming: Boris Bikbov https://www.linkedin.com/in/boris-bikbov.
 }

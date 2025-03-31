@@ -2,21 +2,27 @@
 % Please edit documentation in R/service.check_plausibility.R
 \name{service.convert_creatinine}
 \alias{service.convert_creatinine}
-\title{Convert creatinine values if necessary (depending on the mesurement units).}
+\title{Convert creatinine values between measurement units.}
 \usage{
-service.convert_creatinine(creatinine, creatinine_units)
+service.convert_creatinine(
+  creatinine,
+  creatinine_units,
+  creatinine_reference_units = "mg/dl"
+)
 }
 \arguments{
-\item{creatinine}{Numeric. The creatinine value from data set.}
+\item{creatinine}{Numeric. The creatinine value from a data set.}
 
-\item{creatinine_units}{Character. Creatinine mesurement units defined by user.}
+\item{creatinine_units}{Character. Creatinine mesurement units in a data set.}
+
+\item{creatinine_reference_units}{Character. Creatinine measurement units as a desired output (mg/dl by default).}
 }
 \value{
-numeric Vector with converted values.
+numeric Creatinine values converted into reference measurement units.
 }
 \description{
-Convert creatinine values if necessary (depending on the mesurement units).
+Convert creatinine values between measurement units.
 }
 \details{
-Service function which check mesurement units and convert creatinine values if necessary.
+Service function which check measurement units and convert creatinine values to selected by user.
 }
