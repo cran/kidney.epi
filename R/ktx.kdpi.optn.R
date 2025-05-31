@@ -67,7 +67,7 @@
 
 ktx.kdpi.optn <- function(
   # variables for calculation of KDPI/KDRI
-  age, height_cm = 0, height_ft = 0, height_inch = 0, weight_kg = 0, weight_lb = 0, ethnicity, hypertension, diabetes, causeofdeath, creatinine, hcv, dcdstatus, creatinine_units = "micromol/l",
+  age, height_cm = 0, height_ft = 0, height_inch = 0, weight_kg = 0, weight_lb = 0, ethnicity = NA, hypertension, diabetes, causeofdeath, creatinine, hcv, dcdstatus, creatinine_units = "micromol/l",
   # which calculated parameter to return from the function
   return_output_type = "KDPI",
   # which year for coefficients and KDPI mapping values to use - by default the latest available in the tables ktx.kdpi_mapping_table and ktx.kdpi_coefficients_table
@@ -106,7 +106,11 @@ ktx.kdpi.optn <- function(
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
-  
+
+  # if ethnicity column is not defined
+  if(length(ethnicity) == 1) ethnicity <- rep("none", length(creatinine))  
+
+ 
   # at the beginning assume that all function arguments are present, and in the following code change it to FALSE if any of the obligatory argument(s) is(are) absent
   fx_params_resulting <- TRUE
   err_num <- 0
@@ -411,6 +415,7 @@ ktx.kdpi.optn <- function(
                   NA) # if weight in pounds is not defined, assume NA
             )
 
+  if(!service.check_equal_length(age, height, weight, ethnicity, hypertension, diabetes, causeofdeath, creatinine, hcv, dcdstatus)) stop("The length of variables should be equal.")
 
   # 
   # assign xbeta coefficients to all factors

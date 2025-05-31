@@ -12,7 +12,7 @@
 
 <meta name="author" content="Boris Bikbov, Scientific-Tools.Org" />
 
-<meta name="date" content="2025-03-31" />
+<meta name="date" content="2025-05-31" />
 
 <title>Estimated glomerular filtration rate (eGFR) calculation</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Estimated glomerular filtration rate (eGFR)
 calculation</h1>
 <h4 class="author">Boris Bikbov, <a href="https://Scientific-Tools.Org">Scientific-Tools.Org</a></h4>
-<h4 class="date">2025-03-31</h4>
+<h4 class="date">2025-05-31</h4>
 
 
 
@@ -377,7 +377,7 @@ equations either for a single patient or for a dataset.</p>
 <code>egfr.ckdepi.cr.2021()</code> and its alias
 <code>egfr.ckdepi.cr()</code><br />
 </li>
-<li>CKD-EPI 2021 cystatin-based: function
+<li>CKD-EPI 2021 creatinine-cystatin C-based: function
 <code>egfr.ckdepi.cr_cys.2021()</code><br />
 </li>
 <li>CKD-EPI 2009 creatinine-based: function
@@ -401,15 +401,35 @@ function <code>egfr.ekfc.cr()</code><br />
 </li>
 <li>MDRD: function <code>egfr.mdrd4()</code><br />
 </li>
-<li>Lund-Malmö: function <code>egfr.lm.cr()</code><br />
+<li>Berlin Initiative Study (BIS) creatinine-based (BIS1): function
+<code>egfr.bis.cr()</code><br />
 </li>
-<li>Schwartz: function <code>egfr.schwartz()</code><br />
+<li>BIS creatinine-cystatin C-based (BIS2): function
+<code>egfr.bis.cr_cys()</code><br />
+</li>
+<li>Schwartz “bedside” creatinine-based: function
+<code>egfr.schwartz.cr()</code><br />
+</li>
+<li>Schwartz cystatin C-based: function
+<code>egfr.schwartz.cys()</code><br />
+</li>
+<li>Schwartz creatinine, cystatin C, and BUN based: function
+<code>egfr.schwartz.cr_cys()</code><br />
 </li>
 <li>Chronic Kidney Disease in Children (CKiD) U25 creatinine-based
 equation <code>egfr.ckid_u25.cr()</code><br />
 </li>
 <li>CKiD U25 cystatin-based equation
 <code>egfr.ckid_u25.cys()</code><br />
+</li>
+<li>Cockcroft-Gault creatinine-based equation: <code>egfr.cg.cr()</code>
+(even if it calculates creatinine clearance, the ‘egfr’ is used in the
+function name)<br />
+</li>
+<li>Functions for batched equations application:
+<code>egfr.all_adults.cr()</code>, <code>egfr.all_adults.cys()</code>,
+<code>egfr.all_adults.cr_cys()</code> - return a data frame with columns
+representing different eGFR equations<br />
 </li>
 <li>more is underway. <a href="https://Scientific-Tools.Org/">Scientific-Tools.Org</a> provides
 research and consulting services for policy makers, industry,
@@ -476,19 +496,25 @@ following syntax:</p>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">creatinine =</span> mydata<span class="sc">$</span>cr, <span class="at">age =</span> mydata<span class="sc">$</span>age,</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">sex =</span> mydata<span class="sc">$</span>sex, <span class="at">ethnicity =</span> mydata<span class="sc">$</span>ethnicity,</span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">creatinine_units =</span> <span class="st">&quot;micromol/L&quot;</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="co"># customize all labels for those used in the data frame if necessary</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="at">label_afroamerican =</span> <span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>),</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="at">label_sex_male =</span> <span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>), <span class="at">label_sex_female =</span> <span class="fu">c</span>(<span class="st">&quot;Female&quot;</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>) </span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; Warning in service.check_plausibility.age(age, max_age): There is 1 patient with negative values for age.  This value was substituted to NA.</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; Warning in service.check_plausibility.age(age, max_age): There is 1 patient with age &gt;100 years.  This value was substituted to NA.</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; There are 840 patients with age &lt;18 years.  These values were substituted to NA.</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co"># show descriptive stat for the calculated values</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co"># note that synthetic data set ckd.data contains input parameters for both adults and children, and since the CKD-EPI equation was developed and validated for adults only, the resulting eGFR values for children will be NA. Use children-specific eGFR equations when necessary.</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="fu">summary</span>(mydata<span class="sc">$</span>ckdepi)</span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s </span></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt;   17.78   35.44   45.19   51.80   59.85  179.11     841</span></span></code></pre></div>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="co"># customize all labels for those used in the data frame</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="co"># label(s) used to define male sex in the dataset</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="at">label_sex_male =</span> <span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>), </span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  <span class="co"># label(s) used to define female sex in the dataset</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="at">label_sex_female =</span> <span class="fu">c</span>(<span class="st">&quot;Female&quot;</span>),</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  <span class="co"># label used to define Afroamerican ethnicity in the dataset</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="at">label_afroamerican =</span> <span class="fu">c</span>(<span class="st">&quot;Black&quot;</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>) </span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; Warning: For age the following incorrect values were detected and excluded from calculations (substituted with NA):</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; 1 value is greater than 100</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; 845 values are lower or equal than 18</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; Use children-specific eGFR equations for children younger than 18 years</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; Scientific-Tools.Org takes precision seriously.</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co"># show descriptive stat for the calculated values</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co"># note that synthetic data set ckd.data contains input parameters for both adults and children, and since the CKD-EPI equation was developed and validated for adults only, the resulting eGFR values for children will be NA. Use children-specific eGFR equations when necessary.</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="fu">summary</span>(mydata<span class="sc">$</span>ckdepi)</span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s </span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt;   17.78   35.42   45.03   51.56   59.81  179.11     846</span></span></code></pre></div>
 </div>
 </div>
 <div id="advantages-of-the-kidney.epi-package-functions" class="section level2">

@@ -32,20 +32,12 @@
 
 egfr.mdrd4 <- function(
   # variables for calculation of eGFR
-  creatinine, age, sex, ethnicity, 
+  creatinine, age, sex, ethnicity = NA, 
   # creatinine measurement units
   creatinine_units = "micromol/l",
   # creatinine standartisation method in a laboratory: "IDMS" in case of isotope dilution mass spectrometry standartisation, "non-IDMS" in other cases
   creatinine_method = "non-IDMS",
   # custom labels for factor parameters and their unknown values
-    # introduce variables' labels which any user can adapt to their own labeling in the data file
-    # all labels could be a character, numeric, vector, or list - whatever you prefer
-    # you have to change the labels according your data file
-    #  for example:
-    #    if males in your data file defined as "Male", you have to change below the variable label_sex_male = "Male";
-    #    if you use 1 for definition of male sex, you have to change below the variable label_sex_male = 1;
-    #    if males in your data file defined either as "Male" or as "MALE" or as "Males" or as "M", you have to change below the variable label_sex_male = c ("Male", "MALE", "Males", "M"), but in this case it is worth to normalize your data dictionary;
-    #
     # label for Afroamerican ethnicity
     label_afroamerican = c ("Afroamerican"),
     # label for definition male sex in data set
@@ -57,6 +49,11 @@ egfr.mdrd4 <- function(
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  # if ethnicity column is not defined
+  if(length(ethnicity) == 1) ethnicity <- rep("none", length(creatinine))  
+
+  if(!service.check_equal_length(creatinine, age, ethnicity, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("creatinine", "age", "ethnicity", "sex") # List of obligatory function params which have to be defined by user at the function call
@@ -79,22 +76,16 @@ egfr.mdrd4 <- function(
   # it is completely out of logic and has no explanations, but check for creatinine_method produce error in any case, while the check for creatinine_units works fine
   service.check_param_arguments(creatinine_method, c("idms", "non-idms"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, creatinine)
-  
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age, max_age)
-  # second: since this eGFR equation was developed and validated for adults only, notify user if any children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lower_threshold(age, 18)
-  if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <18 years", "NA"))
-  age <- service.strict_to_numeric_threshold_lower(age, 18)
-  # creatinine
-  service.check_plausibility.creatinine(creatinine)
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = max_age,
+      greater_than = 18,
+      adult_equation = 18
+    )
+  )
+  creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################

@@ -1,5 +1,5 @@
 # Calculate categories of albuminuria and eGFR based on laboratory values
-#' Calculate albuminuria categories
+#' Calculate KDIGO albuminuria categories
 ##################################################################
 # FUNCTION: BEGIN
 #' @details Calculate albuminuria categories (A1, A2, A3) based on albuminuria values.
@@ -11,14 +11,14 @@
 #' @param semiquantitative_values Character string. Defines whether semiquantitative values are allowed in the data. If "any", all semiquantitative values ('<30', '30-300', '>300') and any numeric values (29, 30, 35, etc) will be classified into A categories (NB! both '30-300' and '30-299' will be classified as A2). If "only_limits", only limiting semiquantitative values ('<30', '>300') will be classified into A categories, but middle semiquantitative values ('30-300') will be omitted; but numeric values (29, 30, 35, etc) will be classified into A categories. If "forbidden", only numeric values will be classified into A categories.
 #' @return string albuminuria category.
 #' @export
-#' @name nephro.albuminuria_category
+#' @name ckd.kdigo_category.albuminuria
 #' @examples
 #' # for a single patient
-#' nephro.albuminuria_category (albuminuria = 25, albuminuria_units = "mg/g")
+#' ckd.kdigo_category.albuminuria(albuminuria = 25, albuminuria_units = "mg/g")
 #' # for a dataset - see vignettes for details
-#' # nephro.albuminuria_category (albuminuria = dta$alb, albuminuria_units = "mg/g")
+#' # ckd.kdigo_category.albuminuria(albuminuria = dta$alb, albuminuria_units = "mg/g")
 
-nephro.albuminuria_category <- function(
+ckd.kdigo_category.albuminuria <- function(
   albuminuria, albuminuria_units = "mg/g",
   semiquantitative_values = "forbidden"
 ) {
@@ -43,14 +43,8 @@ nephro.albuminuria_category <- function(
   semiquantitative_values <- tolower(semiquantitative_values)
   service.check_param_arguments(semiquantitative_values, c("any", "only_limits", "forbidden"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(albuminuria)
-
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # albuminuria
-  service.check_plausibility.albuminuria(albuminuria)
+  # check plausible biologic boundaries
+  #albuminuria <- service.check_and_correct_numeric(albuminuria, "albuminuria")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -94,9 +88,13 @@ nephro.albuminuria_category <- function(
       albuminuria [ albuminuria == paste0(A2_lower_threshold, "-", A3_lower_threshold)] <- A3_lower_threshold - 1
       albuminuria [ albuminuria == paste0(A2_lower_threshold, "-", A3_lower_threshold - 1)] <- A3_lower_threshold - 1
     }
+	
+	if (semiquantitative_values == "only_limits") {
+	  albuminuria <- ifelse(grepl("-", albuminuria), NA, albuminuria)
+	}
     
     # proceed both recoded "any" and "only_limits" in the same way
-    albuminuria_category <- character(length(albuminuria))
+    albuminuria_category <- rep(NA_character_, length(albuminuria)) 
     albuminuria_value <- as.numeric(gsub("[<>=]", "", albuminuria))
     albuminuria_operator <- gsub("[0-9.]+", "", albuminuria)
     
@@ -116,6 +114,18 @@ return(albuminuria_category)
 # FUNCTION: END
 ##################################################################
 
+#' Legacy function to calculate albuminuria categories
+##################################################################
+#' @details Legacy function to calculate albuminuria categories (A1, A2, A3) based on albuminuria values. Alias to the ckd.kdigo_category.albuminuria() function. This function is for legacy use only.
+#' @param ...  all arguments for the ckd.kdigo_category.albuminuria() function.
+#' @export
+#' @name nephro.albuminuria_category
+nephro.albuminuria_category <- function(...) {
+	ckd.kdigo_category.albuminuria(...)
+}
+
+
+
 
 #'
 #' Calculate proteinuria categories
@@ -131,14 +141,14 @@ return(albuminuria_category)
 #' @param semiquantitative_values Character string. Defines whether semiquantitative values are allowed in the data. If "any", all semiquantitative values ('<30', '30-300', '>300') and any numeric values (29, 30, 35, etc) will be classified into A categories (NB! both '30-300' and '30-299' will be classified as A2). If "only_limits", only limiting semiquantitative values ('<30', '>300') will be classified into A categories, but middle semiquantitative values ('30-300') will be omitted; but numeric values (29, 30, 35, etc) will be classified into A categories. If "forbidden", only numeric values will be classified into A categories. 
 #' @return string albuminuria category.
 #' @export
-#' @name nephro.proteinuria_category
+#' @name ckd.kdigo_category.proteinuria
 #' @examples
 #' # for a single patient
-#' nephro.proteinuria_category (proteinuria = 25, proteinuria_units = "mg/g")
+#' ckd.kdigo_category.proteinuria(proteinuria = 25, proteinuria_units = "mg/g")
 #' # for a dataset - see vignettes for details
-#' # nephro.proteinuria_category (proteinuria = dta$alb, proteinuria_units = "mg/g")
+#' # ckd.kdigo_category.proteinuria(proteinuria = dta$alb, proteinuria_units = "mg/g")
 
-nephro.proteinuria_category <- function(
+ckd.kdigo_category.proteinuria <- function(
   proteinuria, proteinuria_units = "mg/g",
   semiquantitative_values = "forbidden"
 ) {
@@ -156,21 +166,15 @@ nephro.proteinuria_category <- function(
   service.check_param_number(proteinuria_units)
 
   # check the range of albuminuria_units
-  albuminuria_units <- tolower(proteinuria_units)
+  proteinuria_units <- tolower(proteinuria_units)
   service.check_param_arguments(proteinuria_units, c("mg/day", "mg/mmol", "mg/g"))
 
   # check the range of semiquantitative_values
   semiquantitative_values <- tolower(semiquantitative_values)
   service.check_param_arguments(semiquantitative_values, c("any", "only_limits", "forbidden"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(proteinuria)
-
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # albuminuria
-  service.check_plausibility.albuminuria(proteinuria)
+  # check plausible biologic boundaries
+  #proteinuria <- service.check_and_correct_numeric(proteinuria, "proteinuria")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -212,9 +216,13 @@ nephro.proteinuria_category <- function(
       proteinuria [ proteinuria == paste0(A2_lower_threshold, "-", A3_lower_threshold)] <- A3_lower_threshold - 1
       proteinuria [ proteinuria == paste0(A2_lower_threshold, "-", A3_lower_threshold - 1)] <- A3_lower_threshold - 1
     }
+
+	if (semiquantitative_values == "only_limits") {
+	  proteinuria <- ifelse(grepl("-", proteinuria), NA, proteinuria)
+	}
     
     # proceed both recoded "any" and "only_limits" in the same way
-    albuminuria_category <- character(length(proteinuria))
+    albuminuria_category <- rep(NA_character_, length(proteinuria)) 
     proteinuria_value <- as.numeric(gsub("[<>=]", "", proteinuria))
     proteinuria_operator <- gsub("[0-9.]+", "", proteinuria)
     
@@ -233,6 +241,15 @@ return(albuminuria_category)
 # FUNCTION: END
 ##################################################################
 
+#' Legacy function to calculate proteinuria categories
+##################################################################
+#' @details Legacy function to calculate albuminuria categories (A1, A2, A3) based on proteinuria values. Alias to the ckd.kdigo_category.proteinuria() function. This function is for legacy use only.
+#' @param ...  all arguments for the ckd.kdigo_category.proteinuria() function.
+#' @export
+#' @name nephro.proteinuria_category
+nephro.proteinuria_category <- function(...) {
+	ckd.kdigo_category.proteinuria(...)
+}
 
 
 
@@ -248,14 +265,14 @@ return(albuminuria_category)
 #' @param gfr Numeric vector. eGFR, expressed in "ml/min/1.73m2".
 #' @return string gfr category.
 #' @export
-#' @name nephro.gfr_category
+#' @name ckd.kdigo_category.gfr
 #' @examples
 #' # for a single patient
-#' nephro.gfr_category (gfr = 25)
+#' ckd.kdigo_category.gfr(gfr = 25)
 #' # for a dataset - see vignettes for details
-#' # nephro.gfr_category (gfr = dta$egfr)
+#' # ckd.kdigo_category.gfr(gfr = dta$egfr)
 
-nephro.gfr_category <- function(
+ckd.kdigo_category.gfr <- function(
   gfr
 ) {
 
@@ -267,14 +284,8 @@ nephro.gfr_category <- function(
   args <- names(as.list(match.call())[-1]) # take all params defined by user from the function
   service.check_obligatory_params(fx_params, args)
   
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(gfr)
-
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # albuminuria
-  service.check_plausibility.gfr(gfr)
+  # check plausible biologic boundaries
+  gfr <- service.check_and_correct_numeric(gfr, "GFR")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -303,6 +314,15 @@ return(gfr_category)
 ##################################################################
 
 
+#' Legacy function to calculate KDIGO GFR categories
+##################################################################
+#' @details Legacy function to calculate KDIGO GFR categories. Alias to the ckd.kdigo_category.gfr() function. This function is for legacy use only.
+#' @param ...  all arguments for the ckd.kdigo_category.gfr() function.
+#' @export
+#' @name nephro.gfr_category
+nephro.gfr_category <- function(...) {
+	ckd.kdigo_category.gfr(...)
+}
 
 
 
@@ -320,19 +340,21 @@ return(gfr_category)
 #' @param alb_cat Character vector. Albuminuria categories coded as A1, A2, A3.
 #' @return string risk category.
 #' @export
-#' @name nephro.kdigo_risk_category
+#' @name ckd.kdigo_category.risk
 #' @examples
 #' # for a single patient
-#' nephro.kdigo_risk_category (gfr_cat = "G2", alb_cat = "A3")
+#' ckd.kdigo_category.risk(gfr_cat = "G2", alb_cat = "A3")
 #' # for a dataset - see vignettes for details
-#' # nephro.kdigo_risk_category (gfr_cat = dta$gfr_cat, alb_cat = dta$alb_cat)
+#' # ckd.kdigo_category.risk(gfr_cat = dta$gfr_cat, alb_cat = dta$alb_cat)
 
-nephro.kdigo_risk_category <- function(
+ckd.kdigo_category.risk <- function(
   gfr_cat, alb_cat
 ) {
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  if(!service.check_equal_length(gfr_cat, alb_cat)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("alb_cat", "gfr_cat") # List of obligatory function params which have to be defined by user at the function call
@@ -382,3 +404,12 @@ return(risk)
 
 
 
+#' Legacy function to calculate KDIGO risk categories
+##################################################################
+#' @details Legacy function to calculate KDIGO risk categories. Alias to the ckd.kdigo_category.risk() function. This function is for legacy use only.
+#' @param ...  all arguments for the ckd.kdigo_category.risk() function.
+#' @export
+#' @name nephro.gfr_category
+nephro.kdigo_risk_category <- function(...) {
+	ckd.kdigo_category.risk(...)
+}

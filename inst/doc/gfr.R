@@ -47,9 +47,13 @@ mydata$ckdepi <- egfr.ckdepi.cr.2009(
   creatinine = mydata$cr, age = mydata$age,
   sex = mydata$sex, ethnicity = mydata$ethnicity,
   creatinine_units = "micromol/L",
-  # customize all labels for those used in the data frame if necessary
-  label_afroamerican = c("Black"),
-  label_sex_male = c("Male"), label_sex_female = c("Female")
+  # customize all labels for those used in the data frame
+  # label(s) used to define male sex in the dataset
+  label_sex_male = c("Male"), 
+  # label(s) used to define female sex in the dataset
+  label_sex_female = c("Female"),
+  # label used to define Afroamerican ethnicity in the dataset
+  label_afroamerican = c("Black")
 ) 
 
 # show descriptive stat for the calculated values

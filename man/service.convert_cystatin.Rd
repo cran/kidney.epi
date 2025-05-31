@@ -2,21 +2,34 @@
 % Please edit documentation in R/service.check_plausibility.R
 \name{service.convert_cystatin}
 \alias{service.convert_cystatin}
+\alias{service.convert_bun}
 \title{Convert cystatin C values between measurement units.}
 \usage{
 service.convert_cystatin(cystatin, cystatin_units)
+
+service.convert_bun(bun, bun_units)
 }
 \arguments{
 \item{cystatin}{Numeric. The cystatin C values from a data set.}
 
 \item{cystatin_units}{Character. Cystatin C measurement units in a data set.}
+
+\item{bun}{Numeric. The blood urea nitrogen values from a data set.}
+
+\item{bun_units}{Character. Blood urea nitrogen measurement units in a data set.}
 }
 \value{
 numeric Cystatin C values converted in mg/l.
+
+numeric Blood urea nitrogen values converted in mg/dl.
 }
 \description{
 Convert cystatin C values between measurement units.
+
+Convert blood urea nitrogen values between measurement units.
 }
 \details{
 Service function which check measurement units and convert cystatin C values to mg/l.
+
+Service function which check measurement units and convert blood urea nitrogen values.
 }

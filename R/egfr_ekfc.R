@@ -48,6 +48,11 @@ egfr.ekfc.cr <- function(
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  # if ethnicity column is not defined
+  if(length(ethnicity) == 1) ethnicity <- rep("none", length(creatinine))  
+
+  if(!service.check_equal_length(creatinine, age, ethnicity, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("creatinine", "age", "sex") # List of obligatory function params which have to be defined by user at the function call
@@ -63,22 +68,17 @@ egfr.ekfc.cr <- function(
   # check the range of creatinine_units
   service.check_param_arguments(creatinine_units, c("mg/dl", "micromol/l", "mmol/l"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, creatinine)
-  
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age, max_age)
-  # second: since this eGFR equation was developed and validated for adults only, notify user if any children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lower_threshold(age, 2)
-  if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <2 years", "NA"))
-  age <- service.strict_to_numeric_threshold_lower(age, 2)
-  # creatinine
-  service.check_plausibility.creatinine(creatinine)
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = max_age,
+      greater_than = 2,
+      children_too_young = 2
+    )
+  )
+  creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
+
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -176,6 +176,8 @@ egfr.ekfc.cys <- function(
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  if(!service.check_equal_length(cystatin, age)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("cystatin", "age") # List of obligatory function params which have to be defined by user at the function call
@@ -191,22 +193,16 @@ egfr.ekfc.cys <- function(
   # check the range of cystatin_units
   service.check_param_arguments(cystatin_units, c("mg/l", "nanomol/l"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, cystatin)
-  
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age, max_age)
-  # second: since this eGFR equation was developed and validated for adults only, notify user if any children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lower_threshold(age, 2)
-  if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <2 years", "NA"))
-  age <- service.strict_to_numeric_threshold_lower(age, 2)
-  # creatinine
-  service.check_plausibility.creatinine(cystatin)
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = max_age,
+      greater_than = 2,
+      children_too_young = 2
+    )
+  )
+  cystatin <- service.check_and_correct_numeric(cystatin, "cystatin C")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################

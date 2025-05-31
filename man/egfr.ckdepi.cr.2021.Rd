@@ -44,10 +44,10 @@ Citation: Bikbov B. kidney.epi: Kidney-Related Functions for Clinical and Epidem
 }
 \examples{
 # for a single patient
-egfr.ckdepi.cr.2021 (creatinine = 1.4, age = 60, sex = "Male", 
+egfr.ckdepi.cr.2021(creatinine = 1.4, age = 60, sex = "Male", 
   creatinine_units = "mg/dl")
 # for a dataset - see vignettes for details
-# egfr.ckdepi.cr.2021 (creatinine = dta$scr, age = dta$age, sex = dta$sex, 
+# egfr.ckdepi.cr.2021(creatinine = dta$scr, age = dta$age, sex = dta$sex, 
 #  creatinine_units = "mg/dl")
 }
 \author{

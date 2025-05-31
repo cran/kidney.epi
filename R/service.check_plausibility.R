@@ -11,18 +11,13 @@
 #' @return numeric Vector with controlled values.
 #' @name service.check_plausibility.age
 service.check_plausibility.age <- function(age, max_age = 100) {
-  # logic for this and other similar functions to check plausible biologic boundaries is the following:
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-
-  suspiciosly_low <- service.count_lowerequal_threshold(age, 0)
-  if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "negative values for age", "NA"))
-  suspiciosly_high <- service.count_greater_threshold(age, max_age)
-  if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, paste0("age >", max_age, " years"), "NA"))
-  age <- service.strict_to_numeric_threshold_lower(age, 0)
-  age <- service.strict_to_numeric_threshold_greater(age, max_age)
-
-return (age)
+  # check and inform user whether any values out of boundaries were substituted by NA
+  service.check_and_correct_numeric(age, "age",
+    rules = c(
+	  non_negative = TRUE,
+	  lower_than = max_age
+	  )
+  )
 }
 # FUNCTION: END
 ##################################################################
@@ -40,11 +35,8 @@ return (age)
 #' @name service.check_plausibility.creatinine
 service.check_plausibility.creatinine <- function(creatinine) {
 
-  suspiciosly_low <- service.count_lowerequal_threshold(creatinine, 0)
-  if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "creatinine <=0", "NA"))
-  creatinine <- service.strict_to_numeric_threshold_lower(creatinine, 0)
+  service.check_and_correct_numeric(creatinine, "creatinine")
 
-return (creatinine)
 }
 # FUNCTION: END
 ##################################################################
@@ -61,11 +53,7 @@ return (creatinine)
 #' @name service.check_plausibility.albuminuria
 service.check_plausibility.albuminuria <- function(albuminuria) {
 
-  suspiciosly_low <- service.count_lower_threshold(albuminuria, 0)
-  if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "albuminuria <0", "NA"))
-  albuminuria <- service.strict_to_numeric_threshold_lower(albuminuria, 0)
-
-return (albuminuria)
+  service.check_and_correct_numeric(albuminuria, "albuminuria")
 }
 # FUNCTION: END
 ##################################################################
@@ -84,11 +72,8 @@ return (albuminuria)
 #' @name service.check_plausibility.gfr
 service.check_plausibility.gfr <- function(gfr) {
 
-  suspiciosly_low <- service.count_lowerequal_threshold(gfr, 0)
-  if(suspiciosly_low > 0) warning(service.output_message(suspiciosly_low, "gfr <=0", "NA"))
-  gfr <- service.strict_to_numeric_threshold_lower(gfr, 0)
+  service.check_and_correct_numeric(gfr, "gfr", c(greater_than = 0))
 
-return (gfr)
 }
 # FUNCTION: END
 ##################################################################
@@ -149,6 +134,30 @@ service.convert_cystatin <- function(cystatin, cystatin_units) {
 }
 # FUNCTION: END
 ##################################################################
+
+
+
+##################################################################
+# FUNCTION: BEGIN
+#' Convert blood urea nitrogen values between measurement units. 
+#' @details Service function which check measurement units and convert blood urea nitrogen values.
+#' 
+#' @param bun Numeric. The blood urea nitrogen values from a data set.
+#' @param bun_units Character. Blood urea nitrogen measurement units in a data set.
+#' @return numeric Blood urea nitrogen values converted in mg/dl.
+#' @export
+#' @name service.convert_cystatin
+service.convert_bun <- function(bun, bun_units) {
+  bun_units <- unique(bun_units)
+  # by default blood urea nitrogen is measured in mg/dl and it is the reference in all kidney.epi functions
+  # convert if data are in mmol/L
+  if(bun_units == "mmol/l") bun <- bun * 2.8
+
+  return (bun)
+}
+# FUNCTION: END
+##################################################################
+
 
 
 

@@ -2,30 +2,23 @@
 % Please edit documentation in R/ckd_classify.R
 \name{nephro.gfr_category}
 \alias{nephro.gfr_category}
-\title{Calculate eGFR categories}
+\alias{nephro.kdigo_risk_category}
+\title{Legacy function to calculate KDIGO GFR categories}
 \usage{
-nephro.gfr_category(gfr)
+nephro.gfr_category(...)
+
+nephro.kdigo_risk_category(...)
 }
 \arguments{
-\item{gfr}{Numeric vector. eGFR, expressed in "ml/min/1.73m2".}
-}
-\value{
-string gfr category.
+\item{...}{all arguments for the ckd.kdigo_category.risk() function.}
 }
 \description{
-Calculate eGFR categories
+Legacy function to calculate KDIGO GFR categories
+
+Legacy function to calculate KDIGO risk categories
 }
 \details{
-Calculate eGFR categories (G1, G2, G3a, G3b, G4, G5) based on eGFR values.
+Legacy function to calculate KDIGO GFR categories. Alias to the ckd.kdigo_category.gfr() function. This function is for legacy use only.
 
-Citation: Bikbov B. kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research. Scientific-Tools.Org, https://Scientific-Tools.Org. DOI: 10.32614/CRAN.package.kidney.epi
-}
-\examples{
-# for a single patient
-nephro.gfr_category (gfr = 25)
-# for a dataset - see vignettes for details
-# nephro.gfr_category (gfr = dta$egfr)
-}
-\author{
-Programming: Boris Bikbov https://www.linkedin.com/in/boris-bikbov.
+Legacy function to calculate KDIGO risk categories. Alias to the ckd.kdigo_category.risk() function. This function is for legacy use only.
 }

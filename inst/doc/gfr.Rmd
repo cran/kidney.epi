@@ -36,7 +36,7 @@ kidney.epi contains a set of functions to calculate eGFR by different equations 
 The following eGFR equations are supported:  
 
 * CKD-EPI 2021 creatinine-based: function `egfr.ckdepi.cr.2021()` and its alias `egfr.ckdepi.cr()`  
-* CKD-EPI 2021 cystatin-based: function `egfr.ckdepi.cr_cys.2021()`  
+* CKD-EPI 2021 creatinine-cystatin C-based: function `egfr.ckdepi.cr_cys.2021()`  
 * CKD-EPI 2009 creatinine-based: function `egfr.ckdepi.cr.2009()`  
 * European Kidney Function Consortium (EKFC) creatinine-based: function `egfr.ekfc.cr()`  
 * EKFC cystatin-based: function `egfr.ekfc.cys()`  
@@ -45,11 +45,17 @@ The following eGFR equations are supported:
 * FAS creatinine-cystatin-based: function `egfr.fas.cr_cys()`  
 * Revised Lund-Malmö creatinine-based: function `egfr.lm.cr()`  
 * MDRD: function `egfr.mdrd4()`  
-* Lund-Malmö: function `egfr.lm.cr()`  
-* Schwartz: function `egfr.schwartz()`  
+* Berlin Initiative Study (BIS) creatinine-based (BIS1): function `egfr.bis.cr()`  
+* BIS creatinine-cystatin C-based (BIS2): function `egfr.bis.cr_cys()`  
+* Schwartz "bedside" creatinine-based: function `egfr.schwartz.cr()`  
+* Schwartz cystatin C-based: function `egfr.schwartz.cys()`  
+* Schwartz creatinine, cystatin C, and BUN based: function `egfr.schwartz.cr_cys()`  
 * Chronic Kidney Disease in Children (CKiD) U25 creatinine-based equation `egfr.ckid_u25.cr()`  
 * CKiD U25 cystatin-based equation `egfr.ckid_u25.cys()`  
+* Cockcroft-Gault creatinine-based equation: `egfr.cg.cr()` (even if it calculates creatinine clearance, the 'egfr' is used in the function name)  
+* Functions for batched equations application: `egfr.all_adults.cr()`, `egfr.all_adults.cys()`, `egfr.all_adults.cr_cys()` - return a data frame with columns representing different eGFR equations  
 * more is underway. [Scientific-Tools.Org](https://Scientific-Tools.Org/) provides research and consulting services for policy makers, industry, scientists, patient organizations, and citizens. This package is developed in our free time or with [your support](https://Scientific-Tools.Org/support-us/).  
+
 
 If you use these functions from kidney.epi package for the data analysis and manuscript preparation, please cite the package: "Bikbov B. kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research. Scientific-Tools.Org, https://Scientific-Tools.Org. doi:10.32614/CRAN.package.kidney.epi".
 
@@ -102,9 +108,13 @@ mydata$ckdepi <- egfr.ckdepi.cr.2009(
   creatinine = mydata$cr, age = mydata$age,
   sex = mydata$sex, ethnicity = mydata$ethnicity,
   creatinine_units = "micromol/L",
-  # customize all labels for those used in the data frame if necessary
-  label_afroamerican = c("Black"),
-  label_sex_male = c("Male"), label_sex_female = c("Female")
+  # customize all labels for those used in the data frame
+  # label(s) used to define male sex in the dataset
+  label_sex_male = c("Male"), 
+  # label(s) used to define female sex in the dataset
+  label_sex_female = c("Female"),
+  # label used to define Afroamerican ethnicity in the dataset
+  label_afroamerican = c("Black")
 ) 
 
 # show descriptive stat for the calculated values

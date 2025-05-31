@@ -11,7 +11,7 @@ ktx.kdpi.optn(
   height_inch = 0,
   weight_kg = 0,
   weight_lb = 0,
-  ethnicity,
+  ethnicity = NA,
   hypertension,
   diabetes,
   causeofdeath,

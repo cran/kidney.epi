@@ -4,7 +4,7 @@ This is the source code for the "kidney.epi" R package that contains kidney-rela
 
 The kidney.epi package is made with care by the research consultancy [Scientific-Tools.Org](https://Scientific-Tools.Org/).  
 Contact us for data analysis or software development at [Scientific-Tools.Org](https://Scientific-Tools.Org/contact/) or via 'maintainer("kidney.epi")', connect with the [author on LinkedIn](https://www.linkedin.com/in/boris-bikbov/).  
-Support this and other Scientific-Tools.Org projects: https://Scientific-Tools.Org/support-us/  
+Support this and other Scientific-Tools.Org projects: know more at https://Scientific-Tools.Org/support-us/ or use [PayPal donation](https://www.paypal.com/donate/?hosted_button_id=S8S8HZKMWZQYE)   
 [Home page](https://kidney.scientific-tools.org/r/) and [GitHub repository](https://github.com/scientific-tools-org/kidney.epi) of the package.  
 Connect with us on social platforms: [LinkedIn](https://www.linkedin.com/company/scientific-tools-org/) [X/Twitter](https://twitter.com/SciToolsOrg)
 
@@ -13,11 +13,16 @@ Connect with us on social platforms: [LinkedIn](https://www.linkedin.com/company
 	citation("kidney.epi")
 Bikbov B. kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research. Scientific-Tools.Org, https://Scientific-Tools.Org. doi:10.32614/CRAN.package.kidney.epi.
 
+## Package downloads
+![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/kidney.epi)
+
 ## Agreement on prefix of function names and internal data frames
 nephro. - related to nephrology in general  
-ktx. - related to kidney transplantation  
+ckd. - related to chronic kidney disease  
+ktx. - related to kidney transplantation    
 hd. - related to hemodialysis  
 pd. - related to peritoneal dialysis  
+aki. - related to acute kidney injury  
 egfr. - related to equations for calculation of estimated glomerular filtration rate  
 epi. - related to epidemiology in general  
 service. - service functions or internal purposes of the package (data check, etc)  

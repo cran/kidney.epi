@@ -1,7 +1,7 @@
 Package: kidney.epi
 Title: Kidney-Related Functions for Clinical and Epidemiological
         Research
-Version: 1.3.0
+Version: 1.4.0
 Authors@R: person("Boris", "Bikbov", email = "boris.bikbov@scientific-tools.org", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1925-7506"))
 Maintainer: Boris Bikbov <boris.bikbov@scientific-tools.org>
 Description: Contains kidney care oriented functions.
@@ -21,7 +21,8 @@ Imports: readxl, openxlsx, purrr
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-03-31 18:50:40 UTC; BB2
-Author: Boris Bikbov [aut, cre] (<https://orcid.org/0000-0002-1925-7506>)
+Packaged: 2025-05-31 16:24:27 UTC; BB2
+Author: Boris Bikbov [aut, cre] (ORCID:
+    <https://orcid.org/0000-0002-1925-7506>)
 Repository: CRAN
-Date/Publication: 2025-03-31 21:50:02 UTC
+Date/Publication: 2025-05-31 17:00:03 UTC

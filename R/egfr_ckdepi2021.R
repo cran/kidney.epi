@@ -20,27 +20,29 @@
 #' @name egfr.ckdepi.cr.2021
 #' @examples
 #' # for a single patient
-#' egfr.ckdepi.cr.2021 (creatinine = 1.4, age = 60, sex = "Male", 
+#' egfr.ckdepi.cr.2021(creatinine = 1.4, age = 60, sex = "Male", 
 #'   creatinine_units = "mg/dl")
 #' # for a dataset - see vignettes for details
-#' # egfr.ckdepi.cr.2021 (creatinine = dta$scr, age = dta$age, sex = dta$sex, 
+#' # egfr.ckdepi.cr.2021(creatinine = dta$scr, age = dta$age, sex = dta$sex, 
 #' #  creatinine_units = "mg/dl")
 
 egfr.ckdepi.cr.2021 <- function(
-  # variables for calculation of eGFR
+  # variables for eGFR calculation
   creatinine, age, sex, 
   # creatinine measurement units
   creatinine_units = "micromol/l",
-  # custom labels for factor parameters and their unknown values - more explanations are available in the vignette
-    # label for definition male sex in data set
-    label_sex_male = c ("Male", 1),
-    # label for definition female sex in data set
-    label_sex_female = c ("Female", 0),
+  # labels used in the data set - more explanations are available in the vignette
+    # label(s) used to define male sex in the dataset
+    label_sex_male = c("Male", 1),
+    # label(s) used to define female sex in the dataset
+    label_sex_female = c("Female", 0),
   max_age = 100
 ) {
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  if(!service.check_equal_length(creatinine, age, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("creatinine", "age", "sex") # List of obligatory function params which have to be defined by user at the function call
@@ -56,22 +58,17 @@ egfr.ckdepi.cr.2021 <- function(
   # check the range of creatinine_units
   service.check_param_arguments(creatinine_units, c("mg/dl", "micromol/l", "mmol/l"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, creatinine)
-  
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age, max_age)
-  # second: since this eGFR equation was developed and validated for adults only, notify user if any children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lower_threshold(age, 18)
-  if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <18 years", "NA"))
-  age <- service.strict_to_numeric_threshold_lower(age, 18)
-  # creatinine
-  service.check_plausibility.creatinine(creatinine)
+ 
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = max_age,
+      greater_than = 18,
+      adult_equation = 18
+    )
+  )
+  creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -99,9 +96,9 @@ egfr.ckdepi.cr.2021 <- function(
   
   # apply coefficients
   eGFR <- 142 * 
-  (pmin(cr_over_k, 1)^a) *
-  (pmax(cr_over_k, 1)^(-1.2)) *
-  (0.9938^age)
+    (pmin(cr_over_k, 1)^a) *
+    (pmax(cr_over_k, 1)^(-1.2)) *
+    (0.9938^age)
   # apply final sex coefficient
   eGFR <- ifelse( sex %in% label_sex_female, eGFR * 1.012, eGFR)
 
@@ -163,6 +160,8 @@ egfr.ckdepi.cr_cys.2021 <- function(
   
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  if(!service.check_equal_length(creatinine, age, cystatin, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("creatinine", "cystatin", "age", "sex") # List of obligatory function params which have to be defined by user at the function call
@@ -181,23 +180,17 @@ egfr.ckdepi.cr_cys.2021 <- function(
   service.check_param_arguments(creatinine_units, c("mg/dl", "micromol/l", "mmol/l"))
   service.check_param_arguments(cystatin_units, c("mg/l", "nanomol/l"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, creatinine, cystatin)
-  
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age, max_age)
-  # second: since this eGFR equation was developed and validated for adults only, notify user if any children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lower_threshold(age, 18)
-  if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <18 years", "NA"))
-  age <- service.strict_to_numeric_threshold_lower(age, 18)
-  # creatinine
-  service.check_plausibility.creatinine(creatinine)
-  service.check_plausibility.creatinine(cystatin)
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = max_age,
+      greater_than = 18,
+      adult_equation = 18
+    )
+  )
+  creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
+  cystatin <- service.check_and_correct_numeric(cystatin, "cystatin C")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################

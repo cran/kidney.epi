@@ -1,33 +1,35 @@
-#' Calculate eGFR by the Full age spectrum (FAS) creatinine-based equation
+#' Calculate eGFR by all creatinine-based equations for adults
 ##################################################################
 # FUNCTION: BEGIN
-#' @details Calculate estimated glomerular filtration rate (eGFR) by the Full age spectrum (FAS) creatinine-based equation.
+#' @details Calculate eGFR by all creatinine-based equations for adults available in the kidney.epi package.
 #'
-#' Reference to the equation: Pottel H, Hoste L, Dubourg L et al. An estimating glomerular filtration rate equation for the full age spectrum. Nephrol Dial Transplant 2016; 31:798–806 doi:10.1093/ndt/gfv454.
-#'
+#' References to the equations are available in single functions of the kidney.epi package.
+#' 
 #' Citation: Bikbov B. kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research. Scientific-Tools.Org, https://Scientific-Tools.Org. DOI: 10.32614/CRAN.package.kidney.epi
 #' @author Programming: Boris Bikbov https://www.linkedin.com/in/boris-bikbov.
 #' @param creatinine Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinine_units (if not defined explicitly by user, the default value is "micromol/L").
 #' @param age Numeric vector. Age, in years.
 #' @param sex Vector. The value of variable refers to the parameters label_sex_male and label_sex_female.
-#' @param creatinine_units Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
+#' @param ethnicity Vector. Ethnicity. If no ethnicity will be defined, the calculation will use coefficients for Caucasian subjects. Specify ethnicity labels in the function parameter label_african.
+#' @param creatinine_units Character string. Units in which serum creatinine is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
 #' @param label_sex_male List. Label(s) for definition(s) of male sex.
 #' @param label_sex_female List. Label(s) for definition(s) of female sex.
+#' @param label_african List. Label(s) for African ethnicity. Required only by race-specific equations.
 #' @param max_age Numeric. Maximal age suitable for the equation application, in years. By default is 100 years, but change this value in case you would like to apply equation to older persons.
 #' @return numeric eGFR expressed in ml/min/1.73m\ifelse{html}{\out{<sup>2</sup>}}{\eqn{^2}}.
 #' @export
-#' @name egfr.fas.cr
+#' @name egfr.all_adults.cr
 #' @examples
 #' # for a single patient
-#' egfr.fas.cr (creatinine = 1.4, age = 60, sex = "Male", 
+#' egfr.all_adults.cr (creatinine = 1.4, age = 60, sex = "Male", 
 #'   creatinine_units = "mg/dl")
 #' # for a dataset - see vignettes for details
-#' # egfr.fas.cr (creatinine = dta$scr, age = dta$age, sex = dta$sex, 
+#' # egfr.all_adults.cr (creatinine = dta$scr, age = dta$age, sex = dta$sex, 
 #' #  creatinine_units = "mg/dl")
 
-egfr.fas.cr <- function(
+egfr.all_adults.cr <- function(
   # variables for calculation of eGFR
-  creatinine, age, sex, 
+  creatinine, age, sex, ethnicity = NA,
   # creatinine measurement units
   creatinine_units = "micromol/l",
   # custom labels for factor parameters and their unknown values - more eexplanations are available in the vignette
@@ -35,13 +37,13 @@ egfr.fas.cr <- function(
     label_sex_male = c ("Male", 1),
     # label for definition female sex in data set
     label_sex_female = c ("Female", 0),
+    # label for Afroamerican ethnicity
+    label_african = c ("Afroamerican"),
   max_age = 100
 ) {
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
-
-  if(!service.check_equal_length(creatinine, age, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("creatinine", "age", "sex") # List of obligatory function params which have to be defined by user at the function call
@@ -49,10 +51,11 @@ egfr.fas.cr <- function(
   service.check_obligatory_params(fx_params, args)
   
   # Check the type of arguments inputed by user
-  # convert to lower case to avoid any troubles with possible definitions as "mg/dl" or "mg/dL"
-  creatinine_units <- tolower(creatinine_units)
   # check that user defined a single creatinine_units
   service.check_param_number(creatinine_units)
+
+  # convert to lower case to avoid any troubles with possible definitions as "mg/dl" or "mg/dL"
+  creatinine_units <- tolower(creatinine_units)
 
   # check the range of creatinine_units
   service.check_param_arguments(creatinine_units, c("mg/dl", "micromol/l", "mmol/l"))
@@ -62,8 +65,8 @@ egfr.fas.cr <- function(
     rules = c(
       non_negative = TRUE,
       lower_than = max_age,
-      greater_than = 2,
-      children_too_young = 2
+      greater_than = 18,
+      adult_equation = 18
     )
   )
   creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
@@ -72,40 +75,29 @@ egfr.fas.cr <- function(
   ##################################################################
 
 
-  #
-  # repeat creatinine_units according to the length of the file, since the creatinine_units is defined either by user or by default value as a single value for the whole function
-  #
-  creatinine_units <- rep(creatinine_units, length(creatinine))
-  
-  # define q for children in micromol/L, age is the index of value, so q_boys[1] is 23 for 1-year old, q_boys[7] is 39 for 7-years old, etc
-  q_boys <- c(23, 26, 27, 30, 34, 36, 39, 41, 43, 45, 47, 50, 52, 54, 64, 69, 72, 75, 78)
-  q_girls <- c(23, 26, 27, 30, 34, 36, 39, 41, 43, 45, 47, 50, 52, 54, 57, 59, 61, 61, 62)
-  #
-  # convert creatinine units if necessary
-  #
-  creatinine <- service.convert_creatinine(creatinine, creatinine_units, creatinine_reference_units = "micromol/l")
-  # no need to convert q_boys and q_girls because creatinine was forced to be in micromol/l
+	egfr.ckdepi.cr.2009 <- egfr.ckdepi.cr.2009(creatinine = creatinine, age = age, sex = sex, ethnicity = ethnicity, creatinine_units = creatinine_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, label_afroamerican = label_african, max_age = max_age)
 
-  # q for all ages
-  q_cr <- ifelse(sex %in% label_sex_female,
-    ifelse(age >= 20,
-      62,
-      q_girls[round(age, 0)]
-    ),
-      ifelse(sex %in% label_sex_male,
-        ifelse(age >= 20,
-          80,
-          q_boys[round(age, 0)]
-        ),
-      NA # If sex is not in any known label
-      )
-  )
-  
-  # apply coefficients
-  eGFR <- 107.3 / (creatinine / q_cr)
-  eGFR <- ifelse(age <= 40, eGFR, eGFR*(0.988^(age-40)))
+	egfr.ckdepi.cr.2021 <- egfr.ckdepi.cr.2021(creatinine = creatinine, age = age, sex = sex, creatinine_units = creatinine_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
 
-return (round(eGFR, 2))
+	egfr.ekfc.cr <- egfr.ekfc.cr(creatinine = creatinine, age = age, sex = sex, ethnicity = ethnicity, creatinine_units = creatinine_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
+
+	egfr.fas.cr <- egfr.fas.cr(creatinine = creatinine, age = age, sex = sex, creatinine_units = creatinine_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
+
+	egfr.mdrd4 <- egfr.mdrd4(creatinine = creatinine, age = age, sex = sex, ethnicity = ethnicity, creatinine_units = creatinine_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, label_afroamerican = label_african, max_age = max_age)
+
+	egfr.lm.cr <- egfr.lm.cr(creatinine = creatinine, age = age, sex = sex, creatinine_units = creatinine_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
+
+	egfr.bis.cr <- egfr.bis.cr(creatinine = creatinine, age = age, sex = sex, creatinine_units = creatinine_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
+
+return (data.frame(
+	egfr.ckdepi.cr.2009,
+	egfr.ckdepi.cr.2021,
+	egfr.ekfc.cr,
+	egfr.fas.cr,
+	egfr.mdrd4,
+	egfr.lm.cr,
+	egfr.bis.cr
+	))
 
 }
 
@@ -116,43 +108,42 @@ return (round(eGFR, 2))
 
 
 
-#' Calculate eGFR by the Full age spectrum (FAS) cystatin-based equation
+
+
+
+#' Calculate eGFR by all cystatin-based equations for adults
 ##################################################################
 # FUNCTION: BEGIN
-#' @details Calculate estimated glomerular filtration rate (eGFR) by the Full age spectrum (FAS) cystatin-based equation.
+#' @details Calculate eGFR by all cystatin-based equations for adults available in the kidney.epi package.
 #'
-#' Reference to the equation: Pottel H, Delanaye P, Schaeffner E et al. Estimating glomerular filtration rate for the full age spectrum from serum creatinine and cystatin C. Nephrol Dial Transplant 2017; 32:497–507 doi:10.1093/ndt/gfw425.
+#' References to the equations are available in single functions of the kidney.epi package.
 #' 
 #' Citation: Bikbov B. kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research. Scientific-Tools.Org, https://Scientific-Tools.Org. DOI: 10.32614/CRAN.package.kidney.epi
 #' @author Programming: Boris Bikbov https://www.linkedin.com/in/boris-bikbov.
 #' @param cystatin Numeric vector. Serum cystatin, could be expressed in "mg/L" or "nanomol/L". Units of measurement should be defined in variable cystatin_units (if not defined explicitly by user, the default value is "mg/L").
 #' @param age Numeric vector. Age, in years.
 #' @param cystatin_units Character string. Units in which serum cystatin is expressed. Could be one of the following: "mg/L" or "nanomol/L"
-#' @param equation_type Character string. Whether to use "precise" or "simplified" equation.
 #' @param max_age Numeric. Maximal age suitable for the equation application, in years. By default is 100 years, but change this value in case you would like to apply equation to older persons.
 #' @return numeric eGFR expressed in ml/min/1.73m\ifelse{html}{\out{<sup>2</sup>}}{\eqn{^2}}.
 #' @export
-#' @name egfr.fas.cys
+#' @name egfr.all_adults.cys
 #' @examples
 #' # for a single patient
-#' egfr.fas.cys (cystatin = 0.8, age = 60)
+#' egfr.all_adults.cys (cystatin = 1.4, age = 60,
+#'   cystatin_units = "mg/L")
 #' # for a dataset - see vignettes for details
-#' # egfr.fas.cys (cystatin = dta$cys, age = dta$age)
+#' # egfr.all_adults.cys (cystatin = dta$cys, age = dta$age, 
+#' #  cystatin_units = "mg/L")
 
-egfr.fas.cys <- function(
-  # variables for calculation of eGFR
+egfr.all_adults.cys <- function(
   cystatin, age,
-  # measurement units
   cystatin_units = "mg/L",
-  equation_type = "precise",
   max_age = 100
 ) {
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
   
-  if(!service.check_equal_length(cystatin, age)) stop("The length of variables should be equal.")
-
   # check whether all obligatory argument(s) is(are) defined by user
   fx_params <- c("cystatin", "age") # List of obligatory function params which have to be defined by user at the function call
   args <- names(as.list(match.call())[-1]) # take all params defined by user from the function
@@ -162,53 +153,33 @@ egfr.fas.cys <- function(
   # check that user defined a single cystatin_units
   service.check_param_number(cystatin_units)
 
-  # convert to lower case to avoid any troubles with possible definitions as "mg/dl" or "mg/dL"
   cystatin_units <- tolower(cystatin_units)
 
   # check the range of cystatin_units
-  service.check_param_arguments(cystatin_units, c("mg/l", "nanomol/l") )
-
-  service.check_param_arguments(equation_type, c("precise", "simplified") )
+  service.check_param_arguments(cystatin_units, c("mg/l", "nanomol/l"))
 
   # check plausible biologic boundaries
   age <- service.check_and_correct_numeric(age, "age",
     rules = c(
       non_negative = TRUE,
       lower_than = max_age,
-      greater_than = 2,
-      children_too_young = 2
+      greater_than = 18,
+      adult_equation = 18
     )
   )
   cystatin <- service.check_and_correct_numeric(cystatin, "cystatin C")
 
+
   # CHECK FUNCTION INPUT: END
   ##################################################################
 
-  cystatin_units <- rep(cystatin_units, length(cystatin))
-  
-  #
-  # convert cystatin units if necessary
-  #
-  cystatin <- service.convert_cystatin(cystatin, cystatin_units)
+	egfr.ekfc.cys <- egfr.ekfc.cys(cystatin = cystatin, age = age, cystatin_units = cystatin_units, max_age = max_age)
+	egfr.fas.cys <- egfr.fas.cys(cystatin = cystatin, age = age, cystatin_units = cystatin_units, max_age = max_age)
 
-  # q for all ages 
-  # Based on this analysis, and for the sake of simplicity, we fixed QcysC to 0.82 mg/L for all ages <70 years and to 0.95 mg/L for older ages.
-  # If we use the linear function QcysC = 0.863 + 0.01704 × (Age – 70) to normalize ScysC in the FAScysC and FAScombi equations, then the performance results (data not shown) are not significantly different than when QcysC = 0.95 is used to normalize ScysC in the FAS equation. 
-  if (equation_type == "precise") {
-    q_cys <- ifelse(age < 70, 0.82, 0.863 + 0.01704 * (age - 70))
-  }
-  
-  if (equation_type == "simplified") {
-    q_cys <- ifelse(age < 70, 0.82, 0.95)
-  }
-  
-  
-  # apply coefficients
-  eGFR <- 107.3 / (cystatin / q_cys)
-  eGFR <- ifelse(age > 40, eGFR * (0.988^(age - 40)), eGFR)
-
-return (round(eGFR, 2))
-
+return (data.frame(
+	egfr.ekfc.cys,
+	egfr.fas.cys
+	))
 }
 
 
@@ -219,44 +190,33 @@ return (round(eGFR, 2))
 
 
 
-
-#' Calculate eGFR by the Full age spectrum (FAS) creatinine-cystatin-based equation
+#' Calculate eGFR by all creatinine-cystatin-based equations for adults
 ##################################################################
 # FUNCTION: BEGIN
-#' @details Calculate estimated glomerular filtration rate (eGFR) by the Full age spectrum (FAS) creatinine-cystatin-based equation.
+#' @details Calculate eGFR by all creatinine-cystatin-based equations for adults available in the kidney.epi package.
 #'
-#' Reference to the equation: Pottel H, Delanaye P, Schaeffner E et al. Estimating glomerular filtration rate for the full age spectrum from serum creatinine and cystatin C. Nephrol Dial Transplant 2017; 32:497–507 doi:10.1093/ndt/gfw425.
+#' References to the equations are available in single functions of the kidney.epi package.
 #' 
 #' Citation: Bikbov B. kidney.epi: Kidney-Related Functions for Clinical and Epidemiological Research. Scientific-Tools.Org, https://Scientific-Tools.Org. DOI: 10.32614/CRAN.package.kidney.epi
 #' @author Programming: Boris Bikbov https://www.linkedin.com/in/boris-bikbov.
 #' @param creatinine Numeric vector. Serum creatinine, could be expressed in "micromol/L", "mmol/L" or "mg/dL". Units of measurement should be defined in variable creatinine_units (if not defined explicitly by user, the default value is "micromol/L").
-#' @param cystatin Numeric vector. Serum cystatin, could be expressed in "mg/L" or "nanomol/L". Units of measurement should be defined in variable cystatin_units (if not defined explicitly by user, the default value is "mg/L").
-#' @param equation_type Character string. Whether to use "precise" or "simplified" equation.
 #' @param age Numeric vector. Age, in years.
 #' @param sex Vector. The value of variable refers to the parameters label_sex_male and label_sex_female.
-#' @param alpha Numeric vector. Alpha coefficient for the combined creatinine-cystatin equation. By default is equal to 0.5.
-#' @param creatinine_units Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
+#' @param creatinine_units Character string. Units in which serum creatinine is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
+#' @param cystatin Numeric vector. Serum cystatin, could be expressed in "mg/L" or "nanomol/L". Units of measurement should be defined in variable cystatin_units (if not defined explicitly by user, the default value is "mg/L").
 #' @param cystatin_units Character string. Units in which serum cystatin is expressed. Could be one of the following: "mg/L" or "nanomol/L"
 #' @param label_sex_male List. Label(s) for definition(s) of male sex.
 #' @param label_sex_female List. Label(s) for definition(s) of female sex.
 #' @param max_age Numeric. Maximal age suitable for the equation application, in years. By default is 100 years, but change this value in case you would like to apply equation to older persons.
 #' @return numeric eGFR expressed in ml/min/1.73m\ifelse{html}{\out{<sup>2</sup>}}{\eqn{^2}}.
 #' @export
-#' @name egfr.fas.cr_cys
-#' @examples
-#' # for a single patient
-#' egfr.fas.cr_cys (creatinine = 1.4, cystatin = 0.8, age = 60,
-#'    sex = "Male", creatinine_units = "mg/dl")
-#' # for a dataset - see vignettes for details
-#' # egfr.fas.cr_cys (creatinine = dta$scr, cystatin = dta$cys,
-#' #  age = dta$age, sex = dta$sex, creatinine_units = "mg/dl")
+#' @name egfr.all_adults.cr_cys
 
-egfr.fas.cr_cys <- function(
+egfr.all_adults.cr_cys <- function(
   # variables for calculation of eGFR
-  creatinine, cystatin, age, sex, alpha = 0.5,
-  # measurement units
+  creatinine, cystatin, age, sex,
+  # creatinine measurement units
   creatinine_units = "micromol/l", cystatin_units = "mg/L",
-  equation_type = "precise",
   # custom labels for factor parameters and their unknown values - more explanations are available in the vignette
     # label for definition male sex in data set
     label_sex_male = c ("Male", 1),
@@ -267,11 +227,9 @@ egfr.fas.cr_cys <- function(
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
-
-  if(!service.check_equal_length(creatinine, cystatin, age, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
-  fx_params <- c("creatinine", "cystatin", "age", "sex") # List of obligatory function params which have to be defined by user at the function call
+  fx_params <- c("creatinine", "age", "sex") # List of obligatory function params which have to be defined by user at the function call
   args <- names(as.list(match.call())[-1]) # take all params defined by user from the function
   service.check_obligatory_params(fx_params, args)
   
@@ -279,13 +237,11 @@ egfr.fas.cr_cys <- function(
   # check that user defined a single creatinine_units
   service.check_param_number(creatinine_units)
   service.check_param_number(cystatin_units)
-
+  
   # convert to lower case to avoid any troubles with possible definitions as "mg/dl" or "mg/dL"
   creatinine_units <- tolower(creatinine_units)
   cystatin_units <- tolower(cystatin_units)
-
-  service.check_param_arguments(equation_type, c("precise", "simplified") )
-
+  
   # check the range of creatinine_units
   service.check_param_arguments(creatinine_units, c("mg/dl", "micromol/l", "mmol/l"))
   service.check_param_arguments(cystatin_units, c("mg/l", "nanomol/l"))
@@ -295,8 +251,8 @@ egfr.fas.cr_cys <- function(
     rules = c(
       non_negative = TRUE,
       lower_than = max_age,
-      greater_than = 2,
-      children_too_young = 2
+      greater_than = 18,
+      adult_equation = 18
     )
   )
   creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
@@ -305,59 +261,20 @@ egfr.fas.cr_cys <- function(
   # CHECK FUNCTION INPUT: END
   ##################################################################
 
+  egfr.ckdepi.cr_cys.2021 <- egfr.ckdepi.cr_cys.2021 (creatinine = creatinine, cystatin = cystatin, age = age, sex = sex, creatinine_units = creatinine_units, cystatin_units = cystatin_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
 
-  #
-  # repeat creatinine_units according to the length of the file, since the creatinine_units is defined either by user or by default value as a single value for the whole function
-  #
-  creatinine_units <- rep(creatinine_units, length(creatinine))
-  cystatin_units <- rep(cystatin_units, length(cystatin))
-  alpha <- rep(alpha, length(cystatin))
-  
-  #
-  # convert creatinine units if necessary
-  #
-  creatinine <- service.convert_creatinine(creatinine, creatinine_units, creatinine_reference_units = "micromol/l")
-  cystatin <- service.convert_cystatin(cystatin, cystatin_units)
+  egfr.fas.cr_cys <- egfr.fas.cr_cys (creatinine = creatinine, cystatin = cystatin, age = age, sex = sex, creatinine_units = creatinine_units, cystatin_units = cystatin_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
 
-  # define q for children in micromol/L, age is the index of value, so q_boys[1] is 23 for 1-year old, q_boys[7] is 39 for 7-years old, etc
-  q_boys <- c(23, 26, 27, 30, 34, 36, 39, 41, 43, 45, 47, 50, 52, 54, 64, 69, 72, 75, 78)
-  q_girls <- c(23, 26, 27, 30, 34, 36, 39, 41, 43, 45, 47, 50, 52, 54, 57, 59, 61, 61, 62)
+  egfr.bis.cr_cys <- egfr.bis.cr_cys(creatinine = creatinine, cystatin = cystatin, age = age, sex = sex, creatinine_units = creatinine_units, cystatin_units = cystatin_units, label_sex_male = label_sex_male, label_sex_female = label_sex_female, max_age = max_age)
 
-  # convert creatinine units
-  # no need to convert q_boys and q_girls because creatinine was forced to be in micromol/l
-
-  # q for all ages
-  q_cr <- ifelse(sex %in% label_sex_female,
-    ifelse(age >= 20,
-      62,
-      q_girls[round(age, 0)]
-    ),
-      ifelse(sex %in% label_sex_male,
-        ifelse(age >= 20,
-          80,
-          q_boys[round(age, 0)]
-        ),
-      NA # If sex is not in any known label
-      )
-  )
- 
-
-  if (equation_type == "precise") {
-    q_cys <- ifelse(age < 70, 0.82, 0.863 + 0.01704 * (age - 70))
-  }
-  
-  if (equation_type == "simplified") {
-    q_cys <- ifelse(age < 70, 0.82, 0.95)
-  }
-  
-  # apply coefficients
-  eGFR <-  1 / ( alpha * (creatinine / q_cr) + (1 - alpha) * (cystatin / q_cys) )
-  eGFR <- ifelse(age > 40, eGFR * (0.988^(age - 40)), eGFR)
-  eGFR <- 107.3 * eGFR
-
-return (round(eGFR, 2))
+return (data.frame(
+	egfr.ckdepi.cr_cys.2021,
+	egfr.fas.cr_cys,
+	egfr.bis.cr_cys
+	))
 }
 
 
 # FUNCTION: END
 ##################################################################
+

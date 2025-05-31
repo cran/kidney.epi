@@ -42,7 +42,7 @@ egfr.ckid_u25.cr <- function(
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
-  
+
   # check whether all obligatory argument(s) is(are) defined by user
   args <- names(as.list(match.call())[-1]) # take all params defined by user from the function
   # at the beginning assume that all function arguments are present, and in the following code change it to FALSE if any of the obligatory argument(s) is(are) absent
@@ -65,6 +65,7 @@ egfr.ckid_u25.cr <- function(
       fx_params_resulting <- FALSE
     }
   }
+
   
   # List of obligatory function params which have to be defined by user at the function call
   fx_params <- c("creatinine", "age", "sex")
@@ -80,35 +81,22 @@ egfr.ckid_u25.cr <- function(
   # check the range of creatinine_units
   service.check_param_arguments(creatinine_units, c("mg/dl", "micromol/l", "mmol/l"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, creatinine)
+  # Check whether numerical arguments are fine
   if(local_height_type == "cm"){service.check_params_numeric(height_cm)}
   if(local_height_type == "ft"){service.check_params_numeric(height_ft, height_inch)}
   
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age)
-  # second: since this eGFR equation was developed and validated only for children older 2 years, notify user if younger children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lowerequal_threshold(age, 1)
-  if(suspiciosly_low > 0){
-    cat(service.output_message(suspiciosly_low, "age <=1 years", "NA"))
-    cat("eGFR for children younger than 1 year has to be defined according nomograms\n")
-  }
-  age <- service.strict_to_numeric_threshold_lower(age, 1)
-  # third: since this eGFR equation was developed and validated only for children, notify user if adults were found, and exclude them from calculation
-  suspiciosly_high <- service.count_greater_threshold(age, 26)
-  if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "age >26 years", "NA"))
-  age <- service.strict_to_numeric_threshold_greater(age, 26)
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = 26,
+      greater_than = 1,
+      children_too_young = 1
+    )
+  )
+  creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
 
-  # creatinine
-  service.check_plausibility.creatinine(creatinine)
-  
-  # I don't check height, since it should be done by user
-  
+  # I don't check height plausibility, since it should be done by user
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -133,6 +121,8 @@ egfr.ckid_u25.cr <- function(
                 (height_ft * 30.48 + height_inch * 2.54) / 100 , # if they contain number than convert to meters
                 NA) # if height in feets or inches is not defined, assume NA
   )
+
+  if(!service.check_equal_length(creatinine, age, sex, height)) stop("The length of variables should be equal.")
   
   k <- 
     ifelse(sex %in% label_sex_female, 
@@ -206,6 +196,8 @@ egfr.ckid_u25.cys <- function(
 
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  if(!service.check_equal_length(cystatin, age, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
   args <- names(as.list(match.call())[-1]) # take all params defined by user from the function
@@ -223,29 +215,16 @@ egfr.ckid_u25.cys <- function(
   # check the range of cystatin_units
   service.check_param_arguments(cystatin_units, c("mg/l", "nanomol/l"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, cystatin)
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age)
-  # second: since this eGFR equation was developed and validated only for children older 2 years, notify user if younger children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lowerequal_threshold(age, 1)
-  if(suspiciosly_low > 0){
-    cat(service.output_message(suspiciosly_low, "age <=1 years", "NA"))
-    cat("eGFR for children younger than 1 year has to be defined according nomograms\n")
-  }
-  age <- service.strict_to_numeric_threshold_lower(age, 1)
-  # third: since this eGFR equation was developed and validated only for children, notify user if adults were found, and exclude them from calculation
-  suspiciosly_high <- service.count_greater_threshold(age, 26)
-  if(suspiciosly_high > 0) warning(service.output_message(suspiciosly_high, "age >26 years", "NA"))
-  age <- service.strict_to_numeric_threshold_greater(age, 26)
-
-  # cystatin
-  service.check_plausibility.creatinine(cystatin)
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = 26,
+      greater_than = 1,
+      children_too_young = 1
+    )
+  )
+  cystatin <- service.check_and_correct_numeric(cystatin, "cystatin C")
   
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -283,6 +262,3 @@ return (round(eGFR, 2))
 
 # FUNCTION: END
 ##################################################################
-
-
-

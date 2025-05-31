@@ -11,7 +11,7 @@
 #' @param age Numeric vector. Age, in years.
 #' @param sex Vector. The value of variable refers to the parameters label_sex_male and label_sex_female.
 #' @param ethnicity Vector. Ethnicity. If no ethnicity will be defined, the calculation will use coefficients for White subjects. Specify ethnicity if a study includes African-American subjects, and define the the values of variable in the parameter label_afroamerican.
-#' @param creatinine_units Character string. Units in which serum creatinne is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
+#' @param creatinine_units Character string. Units in which serum creatinine is expressed. Could be one of the following: "micromol/L", "mmol/L" or "mg/dL".
 #' @param label_afroamerican List. Label(s) for Afroamerican ethnicity.
 #' @param label_sex_male List. Label(s) for definition(s) of male sex.
 #' @param label_sex_female List. Label(s) for definition(s) of female sex.
@@ -28,25 +28,30 @@
 #' #   ethnicity = dta$race, creatinine_units = "mg/dl")
 
 egfr.ckdepi.cr.2009 <- function(
-  # variables for calculation of eGFR
+  # variables for eGFR calculation
   creatinine, age, sex, ethnicity = NA, 
   # creatinine measurement units
   creatinine_units = "micromol/l",
-  # custom labels for factor parameters and their unknown values - more explanations are available at the MDRD function
-    # label for Afroamerican ethnicity
+  # labels used in the data set - more explanations are available in the vignette
+    # label used to define Afroamerican ethnicity in the dataset
     label_afroamerican = c ("Afroamerican"),
-    # label for definition male sex in data set
+    # label(s) used to define male sex in the dataset
     label_sex_male = c ("Male", 1),
-    # label for definition female sex in data set
+    # label(s) used to define female sex in the dataset
     label_sex_female = c ("Female", 0),
   max_age = 100
 ) {
   
   ##################################################################
   # CHECK FUNCTION INPUT: BEGIN
+
+  # if ethnicity column is not defined
+  if(length(ethnicity) == 1) ethnicity <- rep("none", length(creatinine))  
+
+  if(!service.check_equal_length(creatinine, age, ethnicity, sex)) stop("The length of variables should be equal.")
   
   # check whether all obligatory argument(s) is(are) defined by user
-  fx_params <- c("creatinine", "age", "ethnicity", "sex") # List of obligatory function params which have to be defined by user at the function call
+  fx_params <- c("creatinine", "age", "sex") # List of obligatory function params which have to be defined by user at the function call
   args <- names(as.list(match.call())[-1]) # take all params defined by user from the function
   service.check_obligatory_params(fx_params, args)
   
@@ -59,22 +64,16 @@ egfr.ckdepi.cr.2009 <- function(
   # check the range of creatinine_units
   service.check_param_arguments(creatinine_units, c("mg/dl", "micromol/l", "mmol/l"))
 
-  # Check whether numerical arguments inputed by user are fine (weight, height etc have to be positive numbers)
-  service.check_params_numeric(age, creatinine)
-  
-  
-  # check plausible biologic boundaries (by functions in the service.check_plausibility.R):
-  #   check and inform user whether any values out of boundaries were substituted by NA
-  #   after the check change the value to boundaries in the possible range (i.e. age > 0 and < 100)
-  # age
-  # first: general check and tidy: age <0 OR age >100
-  age <- service.check_plausibility.age(age, max_age)
-  # second: since this eGFR equation was developed and validated for adults only, notify user if any children were found, and exclude them from calculation
-  suspiciosly_low <- service.count_lower_threshold(age, 18)
-  if(suspiciosly_low > 0) cat(service.output_message(suspiciosly_low, "age <18 years", "NA"))
-  age <- service.strict_to_numeric_threshold_lower(age, 18)
-  # creatinine
-  service.check_plausibility.creatinine(creatinine)
+  # check plausible biologic boundaries
+  age <- service.check_and_correct_numeric(age, "age",
+    rules = c(
+      non_negative = TRUE,
+      lower_than = max_age,
+      greater_than = 18,
+      adult_equation = 18
+    )
+  )
+  creatinine <- service.check_and_correct_numeric(creatinine, "creatinine")
 
   # CHECK FUNCTION INPUT: END
   ##################################################################
@@ -83,7 +82,7 @@ egfr.ckdepi.cr.2009 <- function(
   #
   # repeat creatinine_units according to the length of the file, since the creatinine_units is defined either by user or by default value as a single value for the whole function
   #
-  creatinine_units <- rep(creatinine_units, length(creatinine))  
+  creatinine_units <- rep(creatinine_units, length(creatinine))
   
   #
   # convert creatinine units if necessary

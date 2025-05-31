@@ -1,4 +1,180 @@
-#' Service functions for data check which could be applied in any function of the package or externally
+# Service functions for data check which could be applied in any function of the package or externally
+
+##################################################################
+# FUNCTION: BEGIN
+#' Check and modify if necessary albuminuria values. 
+#' @noRd
+#' @details Service function which check whether albuminuria is in biologically plausible boundaries, shows to user warnings if any, and substitute unplausable values.
+#' 
+#' @param x Numeric. The values to be checked.
+#' @param x_name Character. The parameter label for the output in the console.
+#' @param rules Named vector. The list of rules to be controlled.
+#' @return numeric Vector with controlled values.
+#' @name service.check_and_correct_numeric
+service.check_and_correct_numeric <- function(x, x_name, rules = c(non_negative = TRUE)) {
+
+  if (!is.numeric(x)) {
+    stop("Input values for ", x_name, " must be a numeric vector.")
+  }
+
+  valid <- rep(TRUE, length(x))
+  messages <- character()
+
+  for (rule in names(rules)) {
+    threshold <- rules[[rule]]
+    
+    if (rule == "non_negative" && as.logical(threshold)) {
+      failed <- x < 0
+      if (any(failed, na.rm = TRUE)) {
+        sum_failed <- sum(failed, na.rm = TRUE)
+        messages <- c(messages, service.form_plural(sprintf("%d value{s} {IS} negative", sum_failed), sum_failed))
+      }
+      valid <- valid & !failed
+      
+    } else if (rule == "greater_than") {
+      failed <- x <= threshold
+      if (any(failed, na.rm = TRUE)) {
+        sum_failed <- sum(failed, na.rm = TRUE)
+        messages <- c(messages, service.form_plural(sprintf("%d value{s} {IS} lower or equal than %s", sum_failed, threshold), sum_failed))
+      }
+      valid <- valid & !failed
+
+    } else if (rule == "greater_or_equal_than") {
+      failed <- x < threshold
+      if (any(failed, na.rm = TRUE)) {
+        sum_failed <- sum(failed, na.rm = TRUE)
+        messages <- c(messages, service.form_plural(sprintf("%d value{s} {IS} lower than %s", sum_failed, threshold), sum_failed))
+      }
+      valid <- valid & !failed
+
+    } else if (rule == "adult_equation") {
+      failed <- x < threshold
+      if (any(failed, na.rm = TRUE)) {
+        messages <- c(messages, sprintf("Use children-specific eGFR equations for children younger than %s years", threshold))
+      }
+      valid <- valid & !failed
+
+    } else if (rule == "children_too_young") {
+      failed <- x < threshold
+      if (any(failed, na.rm = TRUE)) {
+        messages <- c(messages, sprintf("eGFR for children younger than %s years has to be defined according to nomograms", threshold))
+      }
+      valid <- valid & !failed
+
+    } else if (rule == "lower_than") {
+      failed <- x >= threshold
+      if (any(failed, na.rm = TRUE)) {
+        sum_failed <- sum(failed, na.rm = TRUE)
+        messages <- c(messages, service.form_plural(sprintf("%d value{s} {IS} greater than %s", sum_failed, threshold), sum_failed))
+      }
+      valid <- valid & !failed
+
+    } else if (rule == "lower_or_equal_than") {
+      failed <- x > threshold
+      if (any(failed, na.rm = TRUE)) {
+        sum_failed <- sum(failed, na.rm = TRUE)
+        messages <- c(messages, service.form_plural(sprintf("%d value{s} {IS} greater or equal than %s", sum_failed, threshold), sum_failed))
+      }
+      valid <- valid & !failed
+
+    } else {
+      messages <- c(messages, sprintf("Unknown rule: '%s' for checking %s values", rule, x_name))
+    }
+  }
+
+  if (length(messages) > 0) {
+    warning(paste0( "For ", x_name, " the following incorrect values were detected and excluded from calculations (substituted with NA):\r\n",
+	  paste(messages, collapse = "\r\n")),
+	  "\r\nScientific-Tools.Org takes precision seriously.", call. = FALSE)
+  }
+
+  x[!valid] <- NA
+  return(x)
+}
+# FUNCTION: END
+##################################################################
+
+
+
+
+##################################################################
+# FUNCTION: BEGIN
+#' Check and modify if necessary albuminuria values. 
+#' @noRd
+#' @details Service function which check whether albuminuria is in biologically plausible boundaries, shows to user warnings if any, and substitute unplausable values.
+#' 
+#' @param x Numeric. The values to be checked.
+#' @param x_name Character. The parameter label for the output in the console.
+#' @param rules Named vector. The list of rules to be controlled.
+#' @return numeric Vector with controlled values.
+#' @name service.check_equal_length
+service.check_equal_length  <- function(...) {
+  args <- match.call(expand.dots = FALSE)$...
+  if (length(args) < 2) return(TRUE)
+  
+  lengths <- numeric(length(args))
+  names_vec <- character(length(args))
+  
+  for (i in seq_along(args)) {
+    val <- eval(args[[i]], parent.frame())
+    lengths[i] <- length(val)
+    names_vec[i] <- deparse(args[[i]])
+  }
+  
+  if (length(unique(lengths)) == 1) {
+    return(TRUE)
+  } else {
+    cat("Provided variables have different lengths:\n")
+    for (i in seq_along(names_vec)) {
+      cat(sprintf("  %s: %d\n", names_vec[i], lengths[i]))
+    }
+    return(FALSE)
+  }
+}
+
+# FUNCTION: END
+##################################################################
+
+
+
+#' Put plural or singular for warning messages
+#' @noRd
+#' @details Put plural or singular for warning messages.
+#' 
+#' @param x Numeric. The value to be checked (usual a count for some variable).
+#' @param template Character string. Custom message to be transformed.
+#' @return Character string. Returns a phrase.
+#' @name service.output_message
+# @examples
+# service.form_plural(template, x)
+# 
+##################################################################
+# FUNCTION: BEGIN
+service.form_plural <- function(template, x) {
+
+  res <- template
+  
+  if(x == 1) {
+    res <- gsub("\\{s\\}", "", res)
+  }else {
+    res <- gsub("\\{s\\}", "s", res)
+  }
+  
+  if(x == 1) {
+    res <- gsub("\\{IS\\}", "is", res)
+  }else {
+    res <- gsub("\\{IS\\}", "are", res)
+  }
+  
+return(res)
+}
+# FUNCTION: END
+##################################################################
+
+
+
+
+#' Verifies whether the single value is among the values of the vector. 
 #'
 #' @noRd
 #' @details Verifies whether the single value is among the values of the vector. 
